@@ -87,7 +87,7 @@ interface Files {
   levelUpMicrolessons: File[];
 }
 
-interface LocalMsgs {
+interface Msgs {
   successes: string[];
   warnings: string[];
   failures: string[];
@@ -98,7 +98,7 @@ interface Data {
   assets: Assets;
   dirs: Dirs;
   files: Files;
-  localMsgs: LocalMsgs;
+  repoMsgs: Msgs;
 }
 
 class TemplateFile implements TemplateFile {
@@ -170,6 +170,6 @@ export {
   Module,
   Dirs,
   Files,
-  LocalMsgs,
+  Msgs,
   Data,
 }

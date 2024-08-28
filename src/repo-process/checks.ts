@@ -1,8 +1,8 @@
 // types
-import { LocalMsgs, Dir, File, Assets } from "../types.js"
+import { Msgs, Dir, File, Assets } from "../types.js"
 
 // do the thing
-function checkCanvasLandingPages(msgs: LocalMsgs, files: File[]): LocalMsgs {
+function checkCanvasLandingPages(msgs: Msgs, files: File[]): Msgs {
   const fallbackPage = files.find(file => (
     file.path === "./canvas-landing-pages/fallback.md"
   ))
@@ -23,7 +23,7 @@ function checkCanvasLandingPages(msgs: LocalMsgs, files: File[]): LocalMsgs {
   return msgs
 }
 
-function checkMicrolessons(msgs: LocalMsgs, microlessons: File[]): LocalMsgs {
+function checkMicrolessons(msgs: Msgs, microlessons: File[]): Msgs {
   if (microlessons.length) {
     msgs.successes.push(`There are ${microlessons.length} microlessons`)
   } else {
@@ -38,7 +38,7 @@ function checkMicrolessons(msgs: LocalMsgs, microlessons: File[]): LocalMsgs {
   return msgs
 }
 
-function checkAssets(msgs: LocalMsgs, assets: Assets): LocalMsgs {
+function checkAssets(msgs: Msgs, assets: Assets): Msgs {
   const totalAssets = assets.rootAssets.length + assets.microlessonAssets.length + assets.miscAssets.length
   msgs.warnings.push(
     `${totalAssets} legacy hero assets will be deleted - any pages that cannot be automatically updated with new banners must be updated manually`
@@ -47,7 +47,7 @@ function checkAssets(msgs: LocalMsgs, assets: Assets): LocalMsgs {
   return msgs
 }
 
-function check(msgs: LocalMsgs, item: Dir | File): LocalMsgs {
+function check(msgs: Msgs, item: Dir | File): Msgs {
   if (item.isFound) {
     msgs.successes.push(`The ${item.path} ${item.type} was found`)
   } else {
@@ -56,7 +56,7 @@ function check(msgs: LocalMsgs, item: Dir | File): LocalMsgs {
   return msgs
 }
 
-function checkInverse(msgs: LocalMsgs, item: Dir | File): LocalMsgs {
+function checkInverse(msgs: Msgs, item: Dir | File): Msgs {
   if (item.isFound) {
     msgs.failures.push(
       `The ${item.path} ${item.type} was found and will need to be manually migrated`
@@ -67,7 +67,7 @@ function checkInverse(msgs: LocalMsgs, item: Dir | File): LocalMsgs {
   return msgs
 }
 
-function checkFileWithHeaders(msgs: LocalMsgs, file: File): LocalMsgs {
+function checkFileWithHeaders(msgs: Msgs, file: File): Msgs {
   if (file.canUpdateHeader) {
     msgs.successes.push(`The ${file.path} file's headers can be updated`)
   } else {

@@ -2,7 +2,7 @@
 import chalk from 'chalk'
 
 // types
-import { LocalMsgs } from "../types.js"
+import { Msgs } from "../types.js"
 
 // data setup
 const log = console.log
@@ -11,7 +11,7 @@ const cWarn = chalk.yellow
 const cErr = chalk.bold.red
 
 // do the thing
-async function render(msgs: LocalMsgs) {
+async function render(msgs: Msgs) {
   await displayMessages(msgs)
   if (!msgs.failures.length) {
     log(cSuccess.bold(
@@ -24,7 +24,7 @@ async function render(msgs: LocalMsgs) {
   }
 }
 
-async function displayMessages(msgs: LocalMsgs) { 
+async function displayMessages(msgs: Msgs) { 
 
   for (const msg of msgs.successes) {
     await timer()
