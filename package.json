@@ -1,0 +1,39 @@
+{
+  "name": "ga-tup",
+  "version": "0.1.0",
+  "description": "A template updater for General Assembly's modular technical content.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run tsc && npm run exmod",
+    "exmod": "chmod u+x ./bin/index.js",
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidStinson/ga-tup.git"
+  },
+  "author": "David Stinson <mail@davidstinson.dev>",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/DavidStinson/ga-tup/issues"
+  },
+  "homepage": "https://github.com/DavidStinson/ga-tup#readme",
+  "dependencies": {
+    "@inquirer/prompts": "^5.3.8",
+    "chalk": "^5.3.0",
+    "change-case": "^5.4.4",
+    "commander": "^12.1.0",
+    "ora": "^8.0.1",
+    "replace-in-file": "^8.1.0",
+    "title-case": "^4.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4"
+  },
+  "bin": {
+    "ga-tup": "./dist/index.js"
+  }
+}
