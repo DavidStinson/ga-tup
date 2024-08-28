@@ -2,10 +2,10 @@
 import { Command } from "commander";
 // local
 import { preflight } from "./preflight/index.js";
-import { collect as collectLocalData } from "./local-collection/index.js";
-import { process as processLocalData } from "./local-process/index.js";
-import { render as renderLocalData } from "./local-render/index.js";
-import { verify as verifyLocalData } from "./prompts/index.js";
+import { collect as collectRepoData } from "./repo-collection/index.js";
+import { process as processRepoData } from "./repo-process/index.js";
+import { render as renderRepoData } from "./repo-render/index.js";
+import { verify as verifyRepoData } from "./prompts/index.js";
 import { collect as collectRemoteData } from "./remote-collection/index.js";
 import { build as localBuild } from "./local-build/index.js";
 // types
@@ -56,7 +56,7 @@ const files = {
     microlessons: [],
     levelUpMicrolessons: [],
 };
-const localMsgs = {
+const repoMsgs = {
     successes: [],
     warnings: [],
     failures: [],
@@ -66,7 +66,7 @@ const initialData = {
     assets,
     dirs,
     files,
-    localMsgs,
+    repoMsgs,
 };
 // do the thing
 async function main() {
@@ -78,11 +78,11 @@ async function main() {
         .description("Update this repo to version 2 of the template")
         .action(async () => {
         await preflight();
-        const collectedLocalData = await collectLocalData(initialData);
-        const processedLocalData = await processLocalData(collectedLocalData);
-        await renderLocalData(processedLocalData.localMsgs);
-        const verifiedLocalData = await verifyLocalData(processedLocalData);
-        const collectedRemoteData = await collectRemoteData(verifiedLocalData);
+        const collectedRepoData = await collectRepoData(initialData);
+        const processedRepoData = await processRepoData(collectedRepoData);
+        await renderRepoData(processedRepoData.repoMsgs);
+        const verifiedRepoData = await verifyRepoData(processedRepoData);
+        const collectedRemoteData = await collectRemoteData(verifiedRepoData);
         const finalData = await localBuild(collectedRemoteData);
     });
     cL.parse();
