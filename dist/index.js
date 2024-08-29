@@ -4,7 +4,8 @@ import { Command } from "commander";
 import { preflight } from "./preflight/index.js";
 import { collect as collectRepoData } from "./repo-collection/index.js";
 import { process as processRepoData } from "./repo-process/index.js";
-import { render as renderRepoData } from "./repo-render/index.js";
+import { collectAndProcess as collectAndProcessEnvData } from "./env/index.js";
+import { renderRepoAndEnvData } from "./render/index.js";
 import { verify as verifyRepoData } from "./prompts/index.js";
 import { collect as collectRemoteData } from "./remote-collection/index.js";
 import { build as localBuild } from "./local-build/index.js";
@@ -61,12 +62,22 @@ const repoMsgs = {
     warnings: [],
     failures: [],
 };
+const env = {
+    isPklInstalled: false,
+};
+const envMsgs = {
+    successes: [],
+    warnings: [],
+    failures: [],
+};
 const initialData = {
     module,
     assets,
     dirs,
     files,
     repoMsgs,
+    env,
+    envMsgs,
 };
 // do the thing
 async function main() {
@@ -80,7 +91,8 @@ async function main() {
         await preflight();
         const collectedRepoData = await collectRepoData(initialData);
         const processedRepoData = await processRepoData(collectedRepoData);
-        await renderRepoData(processedRepoData.repoMsgs);
+        const processedEnvData = await collectAndProcessEnvData(processedRepoData);
+        await renderRepoAndEnvData(processedEnvData);
         const verifiedRepoData = await verifyRepoData(processedRepoData);
         const collectedRemoteData = await collectRemoteData(verifiedRepoData);
         const finalData = await localBuild(collectedRemoteData);

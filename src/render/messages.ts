@@ -2,7 +2,7 @@
 import chalk from 'chalk'
 
 // types
-import { Msgs } from "../types.js"
+import { Msgs } from '../types.js'
 
 // data setup
 const log = console.log
@@ -10,12 +10,11 @@ const cSuccess = chalk.green
 const cWarn = chalk.yellow
 const cErr = chalk.bold.red
 
-// do the thing
 async function render(msgs: Msgs) {
   await displayMessages(msgs)
   if (!msgs.failures.length) {
     log(cSuccess.bold(
-      '🚀 Massive success! This module can be updated with no manual configuration'
+      '🚀 Massive success! This module can be updated with minimal manual configuration'
     ))
   } else {
     log(cErr(
@@ -56,6 +55,4 @@ function timer() {
   return new Promise(res => setTimeout(res, 80))
 }
 
-export {
-  render
-}
+export { render }

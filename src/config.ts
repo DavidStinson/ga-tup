@@ -112,6 +112,9 @@ const config = {
       lectureTemplateUrl: `${templateFilesBaseURL}/references.txt`,
       labTemplateUrl: `${templateFilesBaseURL}/references.txt`,
     },
+  },
+  vars: {
+    pklTemplateUrl: "https://pages.git.generalassemb.ly/modular-curriculum-all-courses/universal-resources-internal/static/v2/pkl/template.pkl",
   }
 }
 

@@ -93,12 +93,18 @@ interface Msgs {
   failures: string[];
 }
 
+interface Env {
+  isPklInstalled: boolean;
+}
+
 interface Data {
   module: Module;
   assets: Assets;
   dirs: Dirs;
   files: Files;
   repoMsgs: Msgs;
+  env: Env;
+  envMsgs: Msgs;
 }
 
 class TemplateFile implements TemplateFile {
@@ -171,5 +177,6 @@ export {
   Dirs,
   Files,
   Msgs,
+  Env,
   Data,
 }
