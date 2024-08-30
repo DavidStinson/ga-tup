@@ -17,8 +17,9 @@ async function promptContinue(msg: string) {
 
 function getMlNamesForConsole(mls: Dir[]): string {
   let mlNames = ""
-  mls.forEach((ml) => {
-    mlNames += `  ${ml.dirNameTitleCase}${os.EOL}`
+  mls.forEach((ml, idx) => {
+    const isLast = idx === mls.length - 1
+    mlNames += `  ${ml.dirNameTitleCase}${isLast ? "" : os.EOL}`
   })
 
   return mlNames.trimStart()

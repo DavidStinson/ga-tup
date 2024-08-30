@@ -12,15 +12,20 @@ import { fixCommonWords } from "./helpers.js"
 import { Module } from "../../types.js"
 
 function getData(module: Module): Module {
-  const moduleDir = path.basename(path.resolve())
-  const noDashName = titleCase(moduleDir).replaceAll("-", " ")
-  const dirNameTitleCase = fixCommonWords(noDashName)
-
-  return {
-    ...module,
-    dirName: moduleDir,
-    dirNameTitleCase: dirNameTitleCase,
-    dirNameCamelCase: camelCase(moduleDir),
+  try {
+    const moduleDir = path.basename(path.resolve())
+    const noDashName = titleCase(moduleDir).replaceAll("-", " ")
+    const dirNameTitleCase = fixCommonWords(noDashName)
+  
+    return {
+      ...module,
+      headline: dirNameTitleCase,
+      dirName: moduleDir,
+      dirNameTitleCase: dirNameTitleCase,
+      dirNameCamelCase: camelCase(moduleDir),
+    }
+  } catch (error) {
+    return module
   }
 }
 

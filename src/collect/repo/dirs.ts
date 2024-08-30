@@ -10,13 +10,13 @@ import { camelCase } from "change-case"
 import { fixCommonWords } from "./helpers.js"
 
 // types
-import { Dirs, Dir, File } from "../../types.js"
+import { Dirs, Dir, File, Module } from "../../types.js"
 
 // config
 import { config } from "../../config.js"
 
 // do the thing
-async function getData(dirs: Dirs): Promise<Dirs> {
+async function getData(dirs: Dirs, module: Module): Promise<Dirs> {
   const {
     defaultLayout,
     canvasLandingPages,
@@ -26,7 +26,7 @@ async function getData(dirs: Dirs): Promise<Dirs> {
   } = dirs
   const foundDirs = await getDirs()
 
-  dirs.microlessons = getMicrolessonDirData(foundDirs)
+  dirs.microlessons = getMicrolessonDirData(foundDirs, module)
   dirs.videoGuide.isFound = await findVideoGuide(foundDirs, dirs)
   dirs.levelUp.isFound = foundDirs.includes(levelUp.dirName)
   dirs.defaultLayout.isFound = foundDirs.includes(defaultLayout.dirName)
@@ -44,8 +44,8 @@ async function getDirs() {
   return dirs.filter((dir) => dir.isDirectory()).map((dir) => dir.name)
 }
 
-function getMicrolessonDirData(foundDirs: string[]): Dir[] {
-  const microlessonsDirs = filterStaticDirs(foundDirs)
+function getMicrolessonDirData(foundDirs: string[], module: Module): Dir[] {
+  const microlessonsDirs = filterStaticDirs(foundDirs, module)
 
   return microlessonsDirs.map((dir) => {
     const noDashName = titleCase(dir).replaceAll("-", " ")
@@ -75,24 +75,31 @@ async function findVideoGuide(
   }
 }
 
-function filterStaticDirs(dirList: string[]) {
-  return dirList.filter((dir) => !config.staticDirs.includes(dir))
+function filterStaticDirs(dirList: string[], module: Module) {
+  if (module.type === "lectureTemplateUrl") {
+    return dirList.filter((dir) => !config.lectureStaticDirs.includes(dir))
+  } else {
+    return dirList.filter((dir) => !config.labStaticDirs.includes(dir))
+  }
 }
 
 async function getLevelUpMicrolessonDirData(files: File[]): Promise<Dir[]> {
   const foundDirs = await getDirs()
 
   return files.map((ml) => {
-    const fileName = path.basename(ml.path)
+    const fileName = path.parse(ml.path).name
     const noDashName = titleCase(fileName).replaceAll("-", " ")
     const fixedTitleCase = fixCommonWords(noDashName)
 
+    // If isFound is true, there is already a dir with the name of a level up
+    // microlesson in the repo so we'd have a conflict if we tried to create
+    // a new dir for that microlesson.
     const isFound = foundDirs.includes(fileName)
 
     return {
       type: "dir",
       isFound: isFound,
-      path: ml.path,
+      path: `./${fileName}`,
       dirName: fileName,
       dirNameTitleCase: fixedTitleCase,
       dirNameCamelCase: camelCase(fileName),

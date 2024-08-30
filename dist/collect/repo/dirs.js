@@ -9,10 +9,10 @@ import { fixCommonWords } from "./helpers.js";
 // config
 import { config } from "../../config.js";
 // do the thing
-async function getData(dirs) {
+async function getData(dirs, module) {
     const { defaultLayout, canvasLandingPages, internalResources, references, levelUp, } = dirs;
     const foundDirs = await getDirs();
-    dirs.microlessons = getMicrolessonDirData(foundDirs);
+    dirs.microlessons = getMicrolessonDirData(foundDirs, module);
     dirs.videoGuide.isFound = await findVideoGuide(foundDirs, dirs);
     dirs.levelUp.isFound = foundDirs.includes(levelUp.dirName);
     dirs.defaultLayout.isFound = foundDirs.includes(defaultLayout.dirName);
@@ -25,8 +25,8 @@ async function getDirs() {
     const dirs = await readdir(".", { withFileTypes: true });
     return dirs.filter((dir) => dir.isDirectory()).map((dir) => dir.name);
 }
-function getMicrolessonDirData(foundDirs) {
-    const microlessonsDirs = filterStaticDirs(foundDirs);
+function getMicrolessonDirData(foundDirs, module) {
+    const microlessonsDirs = filterStaticDirs(foundDirs, module);
     return microlessonsDirs.map((dir) => {
         const noDashName = titleCase(dir).replaceAll("-", " ");
         const fixedTitleCase = fixCommonWords(noDashName);
@@ -51,20 +51,28 @@ async function findVideoGuide(foundDirs, dirs) {
         return false;
     }
 }
-function filterStaticDirs(dirList) {
-    return dirList.filter((dir) => !config.staticDirs.includes(dir));
+function filterStaticDirs(dirList, module) {
+    if (module.type === "lectureTemplateUrl") {
+        return dirList.filter((dir) => !config.lectureStaticDirs.includes(dir));
+    }
+    else {
+        return dirList.filter((dir) => !config.labStaticDirs.includes(dir));
+    }
 }
 async function getLevelUpMicrolessonDirData(files) {
     const foundDirs = await getDirs();
     return files.map((ml) => {
-        const fileName = path.basename(ml.path);
+        const fileName = path.parse(ml.path).name;
         const noDashName = titleCase(fileName).replaceAll("-", " ");
         const fixedTitleCase = fixCommonWords(noDashName);
+        // If isFound is true, there is already a dir with the name of a level up
+        // microlesson in the repo so we'd have a conflict if we tried to create
+        // a new dir for that microlesson.
         const isFound = foundDirs.includes(fileName);
         return {
             type: "dir",
             isFound: isFound,
-            path: ml.path,
+            path: `./${fileName}`,
             dirName: fileName,
             dirNameTitleCase: fixedTitleCase,
             dirNameCamelCase: camelCase(fileName),

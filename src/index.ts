@@ -42,6 +42,7 @@ const module: Module = {
   dirNameCamelCase: "",
   dirNameTitleCase: "",
   customHeadline: false,
+  isMigratingLevelUp: false,
 }
 
 const assets: Assets = {

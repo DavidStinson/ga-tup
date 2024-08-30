@@ -61,6 +61,7 @@ interface Module {
   dirNameCamelCase: string;
   dirNameTitleCase: string;
   customHeadline: boolean;
+  isMigratingLevelUp: boolean;
 }
 
 interface Dirs {

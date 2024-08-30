@@ -17,12 +17,13 @@ const { path } = config
 
 // do the thing
 async function collect(iD: Data): Promise<Data> {
+  
   iD.files.rootReadme = await getFileData(iD.files.rootReadme)
   iD.files.defaultLayout = await getFileData(iD.files.defaultLayout)
   iD.assets.rootAssets = await getIfFilesExist(path.rootAssets)
 
   iD.module = getModule(iD.module)
-  iD.dirs = await getDirs(iD.dirs)
+  iD.dirs = await getDirs(iD.dirs, iD.module)
 
   const mlAssetCandidates = getMicrolessonAssetPaths(iD.dirs.microlessons)
   iD.assets.microlessonAssets = await getIfFilesExist(mlAssetCandidates)
@@ -54,11 +55,22 @@ async function collect(iD: Data): Promise<Data> {
   }
 
   if (iD.dirs.levelUp.isFound) {
-    const levelUpFilesPaths = await getFilePathsOfDirChildren("./level-up")
+    const levelUpDirPath = config.staticDir.levelUp.path
+    const levelUpFilesPaths = await getFilePathsOfDirChildren(levelUpDirPath)
     iD.files.levelUpMicrolessons = await getFilesData(levelUpFilesPaths)
-    iD.dirs.levelUpMicrolessons = await getLevelUpMicrolessonDirData(
-      iD.files.levelUpMicrolessons
-    )
+
+    // We only need to check to see if we can make microlesson dirs for level 
+    // up microlessons if the level up dir holds more than just a README.md
+    // file.
+    const levelUpDirOnlyHoldsReadmeFile =
+      levelUpFilesPaths.length <= 1 && levelUpFilesPaths.includes("README.md")
+    const isLecture = iD.module.type === "lectureTemplateUrl"
+    
+    if (!levelUpDirOnlyHoldsReadmeFile && isLecture) {
+      iD.dirs.levelUpMicrolessons = await getLevelUpMicrolessonDirData(
+        iD.files.levelUpMicrolessons
+      )
+    }
   }
 
   return iD

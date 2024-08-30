@@ -32,7 +32,7 @@ const config = {
             "./internal-resources/assets/originals/hero-release-notes.eps",
         ],
     },
-    staticDirs: [
+    lectureStaticDirs: [
         ".git",
         "_layouts",
         "assets",
@@ -40,6 +40,14 @@ const config = {
         "internal-resources",
         "level-up",
         "references",
+        "node_modules",
+    ],
+    labStaticDirs: [
+        ".git",
+        "_layouts",
+        "assets",
+        "canvas-landing-pages",
+        "internal-resources",
         "node_modules",
     ],
     staticDir: {

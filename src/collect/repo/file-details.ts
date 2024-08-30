@@ -15,7 +15,12 @@ async function getData(file: TemplateFile): Promise<TemplateFile> {
       canUpdateHeader: oldFile.startsWith("# !["),
     }
   } catch (error) {
-    return file
+    return {
+      ...file,
+      oldFile: "",
+      isFound: false,
+      canUpdateHeader: false,
+    }
   }
 }
 

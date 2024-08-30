@@ -26,6 +26,7 @@ const module = {
     dirNameCamelCase: "",
     dirNameTitleCase: "",
     customHeadline: false,
+    isMigratingLevelUp: false,
 };
 const assets = {
     rootAssets: [],

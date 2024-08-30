@@ -12,7 +12,12 @@ async function getData(file) {
         };
     }
     catch (error) {
-        return file;
+        return {
+            ...file,
+            oldFile: "",
+            isFound: false,
+            canUpdateHeader: false,
+        };
     }
 }
 export { getData };

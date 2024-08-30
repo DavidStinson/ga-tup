@@ -18,22 +18,32 @@ function checkCanvasLandingPages(msgs: Msgs, files: File[]): Msgs {
     )
   }
   files.forEach((file) => {
-    msgs = check(msgs, file)
+    msgs = checkGoodItem(msgs, file)
     msgs = checkFileWithHeaders(msgs, file)
   })
 
   return msgs
 }
 
-function checkMicrolessons(msgs: Msgs, microlessons: File[]): Msgs {
-  if (microlessons.length) {
-    msgs.successes.push(`There are ${microlessons.length} microlessons`)
+function checkMicrolessons(msgs: Msgs, microlessons: File[], isLevelUp: boolean): Msgs {
+  if (microlessons.length === 1) {
+    msgs.successes.push(
+      `There is 1${isLevelUp ? " level up " : " "}microlesson.`
+    )
+  } else if (microlessons.length > 1) {
+    msgs.successes.push(
+      `There are ${microlessons.length}${isLevelUp ? " level up " : " "}microlessons.`
+    ) 
   } else {
-    msgs.warnings.push("No microlessons were found")
+    if (isLevelUp) {
+      msgs.successes.push(`No level up microlessons were found.`)
+    } else {
+      msgs.warnings.push(`No microlessons were found.`)
+    }
   }
 
   microlessons.forEach((ml) => {
-    msgs = check(msgs, ml)
+    msgs = checkGoodItem(msgs, ml)
     msgs = checkFileWithHeaders(msgs, ml)
   })
 
@@ -52,7 +62,7 @@ function checkAssets(msgs: Msgs, assets: Assets): Msgs {
   return msgs
 }
 
-function check(msgs: Msgs, item: Dir | File): Msgs {
+function checkGoodItem(msgs: Msgs, item: Dir | File): Msgs {
   if (item.isFound) {
     msgs.successes.push(`The ${item.path} ${item.type} was found`)
   } else {
@@ -63,7 +73,7 @@ function check(msgs: Msgs, item: Dir | File): Msgs {
   return msgs
 }
 
-function checkInverse(msgs: Msgs, item: Dir | File): Msgs {
+function checkBadItem(msgs: Msgs, item: Dir | File): Msgs {
   if (item.isFound) {
     msgs.failures.push(
       `The ${item.path} ${item.type} was found and will need to be manually migrated`
@@ -85,11 +95,50 @@ function checkFileWithHeaders(msgs: Msgs, file: File): Msgs {
   return msgs
 }
 
+function checkLevelUpDirs(msgs: Msgs, dirs: Dir[]): Msgs {
+  const existingDirs = dirs.filter(dir => dir.isFound)
+
+  if (existingDirs.length) {
+    msgs.failures.push(
+      `${existingDirs.length} level up microlessons have overlapping names with 
+  existing directories in the root of the module. These level up microlessons 
+  will need to be manually migrated.`
+    )
+  } else {
+    msgs.successes.push(
+      `No level up microlessons have overlapping names with existing directories.`
+    )
+  }
+
+  dirs.forEach((dir) => {
+    msgs = checkLevelUpDirForOverlap(msgs, dir)
+  })
+
+  return msgs
+}
+
+function checkLevelUpDirForOverlap(msgs: Msgs, dir: Dir): Msgs {
+  // If this dir is found, the user needs to manually migrate that microlesson
+  if (dir.isFound) {
+    msgs.failures.push(
+      `The ${dir.path} directory name matches the name of an existing directory in the root of the module. `
+    )
+  } else {
+    msgs.successes.push(
+      `The ${dir.path} directory can be created.`,
+      `The ${dir.dirNameTitleCase} level up microlesson can be migrated automatically.`
+    )
+  }
+
+  return msgs
+}
+
 export {
-  check,
-  checkInverse,
+  checkGoodItem,
+  checkBadItem,
   checkFileWithHeaders,
   checkCanvasLandingPages,
   checkMicrolessons,
   checkAssets,
+  checkLevelUpDirs,
 }

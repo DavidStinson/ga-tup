@@ -8,12 +8,17 @@ async function prompt(iD) {
     await promptContinue("Continue with the update?");
     iD.module = await modulePrefixCollect(iD.module);
     iD.module = await verifyAndCollectHeadline(iD.module);
-    iD.dirs.microlessons = await verifyAndCollectMlTitles(iD.dirs.microlessons);
+    console.log(iD.module);
+    iD.dirs.microlessons = await verifyAndCollectMlTitles(iD.dirs.microlessons, false);
+    iD.module.isMigratingLevelUp = await checkLevelUpMigrating(iD.dirs.levelUpMicrolessons);
+    if (iD.module.isMigratingLevelUp) {
+        iD.dirs.levelUpMicrolessons = await verifyAndCollectMlTitles(iD.dirs.levelUpMicrolessons, true);
+    }
     iD = await confirmSelections(iD);
     return iD;
 }
 async function verifyAndCollectHeadline(module) {
-    return (await verifyHeadline(module)) ? module : await collectHeadline(module);
+    return await verifyHeadline(module) ? module : await collectHeadline(module);
 }
 async function verifyHeadline(module) {
     const msg = module.customHeadline
@@ -35,11 +40,12 @@ async function verifyHeadline(module) {
   Verify that this is the exact name you wish to use. Take note of:
    - Capitalization (particularly method names or proper nouns)
    - Punctuation (including dashes)
-
   ${module.prefix
-            ? "It looks like you specified a prefix, meaning this is likely not the correct headline."
-            : ""}
-
+            ? `
+    It looks like you specified a prefix, meaning this is likely not the 
+    correct headline.
+`
+            : ``}
   Is this the correct headline?`;
     try {
         return await confirm({ message: msg });
@@ -63,14 +69,15 @@ async function collectHeadline(module) {
         process.exit(0);
     }
 }
-async function verifyAndCollectMlTitles(mls) {
-    return (await verifyMlTitles(mls)) ? mls : await collectMlTitles(mls);
+async function verifyAndCollectMlTitles(mls, isLevelUp = false) {
+    return await verifyMlTitles(mls, isLevelUp) ? mls : await collectMlTitles(mls);
 }
-async function verifyMlTitles(mls) {
+async function verifyMlTitles(mls, isLevelUp = false) {
     const mlNames = getMlNamesForConsole(mls);
-    const msg = `Auto-detected the microlesson names as:
+    const msg = `Auto-detected the${isLevelUp ? " Level Up " : " "}microlesson names as:
       
   ${mlNames}
+
   These are the names that will be used to refer to these microlessons
   throughout the module.
   Verify that these are the exact names you wish to use. Take note of:
@@ -107,6 +114,22 @@ async function collectMlTitles(mls) {
             });
         }
         return mls;
+    }
+    catch (error) {
+        process.exit(0);
+    }
+}
+async function checkLevelUpMigrating(mls) {
+    if (!mls.length)
+        return false;
+    const existingDirs = mls.filter(dir => dir.isFound);
+    if (mls.length === existingDirs.length)
+        return false;
+    const msg = `Some or all of the existing Level Up microlessons in the ./level-up directory
+  can be migrated into their own directories in the root of the module automatically.
+  Would you like to do this?`;
+    try {
+        return await confirm({ message: msg });
     }
     catch (error) {
         process.exit(0);
@@ -151,18 +174,47 @@ async function confirmSelections(iD) {
   ${iD.module.prefix
         ? `${iD.module.prefix} - ${iD.module.headline}`
         : iD.module.headline}
-
+  ${iD.module.prefix
+        ? `
   Module Prefix:
   ${iD.module.prefix}
-
+`
+        : ``}
   Module Headline:
   ${iD.module.headline}
 
   Module Microlessons:
   ${mlNames}
+
+  ${levelUpMlDisplay(iD.dirs.levelUpMicrolessons, iD.module)}
+
   Is all of this correct?`;
     if (await confirm({ message: msg }))
         return iD;
     return prompt(iD);
+}
+function levelUpMlDisplay(dirs, module) {
+    const noLevelUpMlsMsg = `There are no Level Up microlessons to migrate.`;
+    if (!dirs.length)
+        return noLevelUpMlsMsg;
+    const allLevelUpMlsOverlapMsg = `No Level Up microlessons can be migrated because the existing Level Up
+  microlessons in the ./level-up directory all have overlapping names with
+  directories already present in the root of the module.`;
+    const mlsToMigrate = dirs.filter(dir => !dir.isFound);
+    if (!mlsToMigrate.length)
+        return allLevelUpMlsOverlapMsg;
+    const levelUpMlNames = getMlNamesForConsole(mlsToMigrate);
+    const someLevelUpMlsOverlapMsg = `Some, but not all, Level Up microlessons can be migrated. They're shown below:
+
+  ${levelUpMlNames}`;
+    const noLevelUpMlsOverlapMsg = `All Level Up microlessons can be migrated. They're shown below:
+
+  ${levelUpMlNames}`;
+    if (mlsToMigrate.length < dirs.length) {
+        return someLevelUpMlsOverlapMsg;
+    }
+    else {
+        return noLevelUpMlsOverlapMsg;
+    }
 }
 export { prompt };

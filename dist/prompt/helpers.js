@@ -13,8 +13,9 @@ async function promptContinue(msg) {
 }
 function getMlNamesForConsole(mls) {
     let mlNames = "";
-    mls.forEach((ml) => {
-        mlNames += `  ${ml.dirNameTitleCase}${os.EOL}`;
+    mls.forEach((ml, idx) => {
+        const isLast = idx === mls.length - 1;
+        mlNames += `  ${ml.dirNameTitleCase}${isLast ? "" : os.EOL}`;
     });
     return mlNames.trimStart();
 }
