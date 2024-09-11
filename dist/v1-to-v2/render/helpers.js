@@ -7,6 +7,12 @@ const cWarn = chalk.yellow;
 const cErr = chalk.bold.red;
 // do the thing
 async function renderMessages(msgs) {
+    if ("unchanged" in msgs) {
+        for (const msg of msgs.unchanged) {
+            await timer();
+            successMessage(msg);
+        }
+    }
     for (const msg of msgs.successes) {
         await timer();
         successMessage(msg);

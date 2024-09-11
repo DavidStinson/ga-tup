@@ -9,13 +9,49 @@ async function prompt(iD) {
     await promptContinue("Continue with the update?");
     iD.module = await modulePrefixCollect(iD.module);
     iD.module = await verifyAndCollectHeadline(iD.module);
-    iD.dirs.microlessons = await verifyAndCollectMlTitles(iD.dirs.microlessons, false);
-    iD.module.meta.isMigratingLevelUp = await checkLevelUpMigrating(iD.dirs.levelUpMicrolessons);
-    if (iD.module.meta.isMigratingLevelUp) {
-        iD.dirs.levelUpMicrolessons = await verifyAndCollectMlTitles(iD.dirs.levelUpMicrolessons, true);
+    iD.module = await verifyAndCollectGhRepoName(iD.module);
+    iD.files.mls = await verifyAndCollectMlTitles(iD.files.mls, false);
+    iD.module.meta.isMigratingLvlUp = await checkLevelUpMigrating(iD.dirs.lvlUpMls);
+    if (!iD.module.meta.isMigratingLvlUp) {
+        iD.dirs.lvlUpMls = await toggleOffCreate(iD.dirs.lvlUpMls);
+    }
+    if (iD.module.meta.type === "lecture") {
+        iD.files.lvlUpMls = await verifyAndCollectMlTitles(iD.files.lvlUpMls, true);
     }
     iD = await confirmSelections(iD);
     return iD;
+}
+async function modulePrefixCollect(module) {
+    const msg = module.prefix
+        ? `You've specified this prefix:
+
+    ${module.prefix}
+
+  This is the name that will be used as the prefix throughout the module.
+  Do you want to change it?`
+        : `Auto-detected the module name as:
+
+    ${module.dirNameTitleCase}
+
+  This is the name that will be used as the headline name throughout the module.
+  Some of this headline name may be part of the module prefix name instead.
+  Would you like to continue without specifying a prefix?`;
+    try {
+        if (await confirm({ message: msg }))
+            return module;
+        const userInput = await input({
+            message: "What is the prefix?",
+            default: module.prefix,
+        });
+        module.prefix = userInput.trim();
+        return module;
+    }
+    catch (error) {
+        // Not logging anything more here because this is called only if the user
+        // quits the program.
+        console.log("Exiting...");
+        process.exit(0);
+    }
 }
 async function verifyAndCollectHeadline(module) {
     return await verifyHeadline(module) ? module : await collectHeadline(module);
@@ -24,7 +60,7 @@ async function verifyHeadline(module) {
     const msg = module.meta.customHeadline
         ? `You previously identified the module headline as:
     
-  ${module.headline}
+    ${module.headline}
 
   This is the name that will be used as the headline throughout the module.
   Verify that this is the exact name you wish to use. Take note of:
@@ -34,7 +70,7 @@ async function verifyHeadline(module) {
   Is this the correct headline?`
         : `Auto-detected the module name as:
 
-  ${module.dirNameTitleCase}
+    ${module.dirNameTitleCase}
 
   This is the name that will be used as the headline throughout the module.
   Verify that this is the exact name you wish to use. Take note of:
@@ -64,8 +100,8 @@ async function collectHeadline(module) {
             default: module.headline ? module.headline : module.dirNameTitleCase,
             required: true,
         });
-        module.meta.customHeadline = module.dirNameTitleCase === userInput;
-        module.headline = userInput;
+        module.headline = userInput.trim();
+        module.meta.customHeadline = module.dirNameTitleCase !== module.headline;
         return module;
     }
     catch (error) {
@@ -75,21 +111,71 @@ async function collectHeadline(module) {
         process.exit(0);
     }
 }
+async function verifyAndCollectGhRepoName(module) {
+    module.dirName = await verifyGhRepoName(module)
+        ? module.dirName
+        : await collectGhRepoName(module);
+    return module;
+}
+async function verifyGhRepoName(module) {
+    const msg = `Auto-detected the GitHub repository name as:
+
+    ${module.dirName}
+
+  It is extremely important that this matches the name of this repository on GitHub exactly.
+  Is this the exact name of this module as it appears on GitHub?`;
+    try {
+        return await confirm({ message: msg });
+    }
+    catch (error) {
+        // Not logging anything more here because this is called only if the user
+        // quits the program.
+        console.log("Exiting...");
+        process.exit(0);
+    }
+}
+async function collectGhRepoName(module) {
+    try {
+        const userInput = await input({
+            message: "What is the correct name?",
+            default: module.dirName,
+            required: true,
+        });
+        return userInput.trim();
+    }
+    catch (error) {
+        // Not logging anything more here because this is called only if the user
+        // quits the program.
+        console.log("Exiting...");
+        process.exit(0);
+    }
+}
 async function verifyAndCollectMlTitles(mls, isLevelUp = false) {
-    return await verifyMlTitles(mls, isLevelUp) ? mls : await collectMlTitles(mls);
+    const mlsThatExist = mls.filter(ml => ml.isFound);
+    const verifiedMls = await verifyMlTitles(mlsThatExist, isLevelUp)
+        ? mlsThatExist
+        : await collectMlTitles(mlsThatExist);
+    return mls.map(ml => verifiedMls.find(vm => vm.id === ml.id) || ml);
 }
 async function verifyMlTitles(mls, isLevelUp = false) {
+    if (!mls.length)
+        return true;
     const mlNames = getMlNamesForConsole(mls);
     const msg = `Auto-detected the${isLevelUp ? " Level Up " : " "}microlesson names as:
       
-  ${mlNames}
+    ${mlNames}
 
   These are the names that will be used to refer to these microlessons
   throughout the module.
   Verify that these are the exact names you wish to use. Take note of:
    - Capitalization (particularly method names or proper nouns)
    - Punctuation (including dashes)
-
+  ${!isLevelUp
+        ? `
+  If you think a microlesson is missing, ensure that the microlesson's directory
+  contains a README.md file.
+`
+        : ``}
   Are these names all correct?`;
     try {
         return await confirm({ message: msg });
@@ -106,7 +192,7 @@ async function collectMlTitles(mls) {
         while (true) {
             const choices = mls.map((ml) => ({
                 value: ml,
-                name: ml.dirNameTitleCase,
+                name: ml.displayName,
             }));
             choices.unshift({ value: false, name: "I'm done editing!" });
             const editingMl = await select({
@@ -115,12 +201,14 @@ async function collectMlTitles(mls) {
             });
             if (typeof editingMl === "boolean")
                 break;
-            const selectedMlIdx = mls.findIndex((ml) => ml.dirName === editingMl.dirName);
-            mls[selectedMlIdx].dirNameTitleCase = await input({
+            const selectedMlIdx = mls.findIndex((ml) => ml.id === editingMl.id);
+            const userInput = await input({
                 message: "What is the correct name?",
-                default: editingMl.dirNameTitleCase,
+                default: editingMl.displayName,
                 required: true,
             });
+            mls[selectedMlIdx].displayName = userInput.trim();
+            mls[selectedMlIdx].titleCaseName = mls[selectedMlIdx].displayName;
         }
         return mls;
     }
@@ -134,7 +222,7 @@ async function collectMlTitles(mls) {
 async function checkLevelUpMigrating(mls) {
     if (!mls.length)
         return false;
-    const existingDirs = mls.filter(dir => dir.isFound);
+    const existingDirs = mls.filter(dir => !dir.canCreate);
     if (mls.length === existingDirs.length)
         return false;
     const msg = `Some or all of the existing Level Up microlessons in the ./level-up directory
@@ -150,61 +238,38 @@ async function checkLevelUpMigrating(mls) {
         process.exit(0);
     }
 }
-async function modulePrefixCollect(module) {
-    const msg = module.prefix
-        ? `You've specified this prefix:
-
-  ${module.prefix}
-
-  This is the name that will be used as the prefix throughout the module.
-  Do you want to change it?`
-        : `Auto-detected the module name as:
-
-  ${module.dirNameTitleCase}
-
-  This is the name that will be used as the headline name throughout the module.
-  Some of this headline name may be part of the module prefix name instead.
-  Would you like to continue without specifying a prefix?`;
-    try {
-        if (await confirm({ message: msg }))
-            return module;
-        module.prefix = await input({
-            message: "What is the prefix?",
-            default: module.prefix,
-        });
-        return module;
-    }
-    catch (error) {
-        // Not logging anything more here because this is called only if the user
-        // quits the program.
-        console.log("Exiting...");
-        process.exit(0);
-    }
+async function toggleOffCreate(dirs) {
+    return dirs.map((dir) => ({ ...dir, shouldCreate: false }));
 }
 async function confirmSelections(iD) {
-    const mlNames = getMlNamesForConsole(iD.dirs.microlessons);
+    const { files, dirs, module } = iD;
+    const mlsThatExist = files.mls.filter(ml => ml.isFound);
+    const mlNames = getMlNamesForConsole(mlsThatExist);
     const msg = `Please review the following:
   
   Module type:
-  ${titleCase(iD.module.meta.type)}
+    ${titleCase(module.meta.type)}
+
+  Module GitHub repository name:
+    ${module.dirName}
   
   Full module title:
-  ${iD.module.prefix
-        ? `${iD.module.prefix} - ${iD.module.headline}`
-        : iD.module.headline}
-  ${iD.module.prefix
+    ${module.prefix
+        ? `${module.prefix} - ${module.headline}`
+        : module.headline}
+  ${module.prefix
         ? `
   Module Prefix:
-  ${iD.module.prefix}
+    ${module.prefix}
 `
         : ``}
   Module Headline:
-  ${iD.module.headline}
+    ${module.headline}
 
   Module Microlessons:
-  ${mlNames}
+    ${mlNames}
 
-  ${levelUpMlDisplay(iD.dirs.levelUpMicrolessons, iD.module)}
+  ${levelUpMlDisplay(files.lvlUpMls, dirs.lvlUpMls, module)}
 
   Is all of this correct?`;
     try {
@@ -219,27 +284,29 @@ async function confirmSelections(iD) {
         process.exit(0);
     }
 }
-function levelUpMlDisplay(dirs, module) {
-    const optNoLevelUpMigrateMsg = "You have decided not to migrate the Level Up microlessons.";
-    if (!module.meta.isMigratingLevelUp)
-        return optNoLevelUpMigrateMsg;
+function levelUpMlDisplay(files, dirs, module) {
+    const notLectureMsg = `This is not a lecture module, so no Level Up microlessons need to be migrated.`;
+    if (module.meta.type !== "lecture")
+        return notLectureMsg;
     const noLevelUpMlsMsg = `There are no Level Up microlessons to migrate.`;
     if (!dirs.length)
         return noLevelUpMlsMsg;
+    const optNoLevelUpMigrateMsg = "You have decided not to migrate the Level Up microlessons.";
+    if (!module.meta.isMigratingLvlUp)
+        return optNoLevelUpMigrateMsg;
     const allLevelUpMlsOverlapMsg = `No Level Up microlessons can be migrated because the existing Level Up
   microlessons in the ./level-up directory all have overlapping names with
   directories already present in the root of the module.`;
-    const mlsToMigrate = dirs.filter(dir => !dir.isFound);
-    if (!mlsToMigrate.length)
+    const dirsWithoutOverlap = dirs.filter(dir => dir.canCreate);
+    if (!dirsWithoutOverlap.length)
         return allLevelUpMlsOverlapMsg;
+    const mlsToMigrate = files.filter(file => (dirsWithoutOverlap.some(dir => dir.dirName === file.fileName)));
     const levelUpMlNames = getMlNamesForConsole(mlsToMigrate);
-    const someLevelUpMlsOverlapMsg = `Some, but not all, Level Up microlessons can be migrated. They're shown below:
-
-  ${levelUpMlNames}`;
+    const someLevelUpMlsOverlapMsg = `Some, but not all Level Up microlessons can be migrated. They're shown below:
+    ${levelUpMlNames}`;
     const noLevelUpMlsOverlapMsg = `All Level Up microlessons can be migrated. They're shown below:
-
-  ${levelUpMlNames}`;
-    if (mlsToMigrate.length < dirs.length) {
+    ${levelUpMlNames}`;
+    if (mlsToMigrate.length < files.length) {
         return someLevelUpMlsOverlapMsg;
     }
     else {

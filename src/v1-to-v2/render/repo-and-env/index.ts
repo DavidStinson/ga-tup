@@ -18,7 +18,7 @@ async function render(iD: Data): Promise<void> {
   await renderMessages(msgs)
   if (!msgs.failures.length) {
     log(cSuccess.bold(
-      '🚀 Massive success! This module can be updated with minimal manual configuration'
+      '🚀 Massive success! This module can be updated with minimal manual configuration.'
     ))
   } else {
     log(cErr(

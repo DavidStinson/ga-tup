@@ -27,10 +27,13 @@
     "commander": "^12.1.0",
     "ora": "^8.0.1",
     "replace-in-file": "^8.1.0",
-    "title-case": "^4.3.1"
+    "title-case": "^4.3.1",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.5.0",
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.5.4"
   },
   "bin": {

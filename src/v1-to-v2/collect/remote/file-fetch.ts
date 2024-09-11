@@ -1,38 +1,47 @@
+// npm
+import chalk from "chalk"
+
 // types
-import { TemplateFile, PureTemplateFile } from "../../types.js"
+import { 
+  TemplateFile, TemplateFileWithHeading, PureTemplateFile 
+} from "../../types.js"
 
-// data setup
-class ResponseError extends Error {
-  res: Response
-
-  constructor(message: string, res: Response) {
-    super(message)
-    this.res = res
-  }
-}
+// types
+import { ResponseError } from "./index.js"
 
 // do the thing
-async function getData(
-  fileData: TemplateFile, urlType: "lectureTemplateUrl" | "labTemplateUrl"
-) {
+async function getData<T extends TemplateFile | TemplateFileWithHeading>(
+  fileData: T,
+  urlType: "lectureTemplateUrl" | "labTemplateUrl"
+): Promise<T> {
   try {
     const templateFileData = await fetch(fileData[urlType])
 
     if (!templateFileData.ok) {
-      throw new ResponseError("Bad fetch response", templateFileData)
+      throw new ResponseError("Bad fetch response.", templateFileData)
     }
 
     fileData.templateFile = await templateFileData.text()
+    fileData.templateFileFetched = true
+    fileData.canUpdateContent = true
 
     return fileData
   } catch (error) {
     if (error instanceof ResponseError && error.res) {
-      throw new Error(`An error occurred.
+      console.log(
+        chalk.red(`An error occurred while fetching a template file.
   File: ${error.res.url}
-  Status code: ${error.res.status}`)
+  Status code: ${error.res.status}
+  More details below.`)
+      )
+      console.dir(error.res, { depth: null })
     } else {
-      throw new Error(error as string)
+      console.log(chalk.red(error))
     }
+
+    fileData.canMoveOrCreate = false
+
+    return fileData
   }
 }
 
@@ -47,15 +56,22 @@ async function getPureData(
     }
 
     fileData.templateFile = await templateFileData.text()
+    fileData.templateFileFetched = true
+    
     return fileData
   } catch (error) {
     if (error instanceof ResponseError && error.res) {
-      throw new Error(`An error occurred.
+      console.log(
+        chalk.red(`An error occurred while fetching a template file.
   File: ${error.res.url}
-  Status code: ${error.res.status}`)
+  Status code: ${error.res.status}
+  More details below.`)
+      )
+      console.dir(error.res, { depth: null })
     } else {
-      throw new Error(error as string)
+      console.log(chalk.red(error))
     }
+    return fileData
   }
 }
 

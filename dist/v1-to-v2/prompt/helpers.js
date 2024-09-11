@@ -18,7 +18,7 @@ function getMlNamesForConsole(mls) {
     let mlNames = "";
     mls.forEach((ml, idx) => {
         const isLast = idx === mls.length - 1;
-        mlNames += `  ${ml.dirNameTitleCase}${isLast ? "" : os.EOL}`;
+        mlNames += `    ${ml.displayName}${isLast ? "" : os.EOL}`;
     });
     return mlNames.trimStart();
 }

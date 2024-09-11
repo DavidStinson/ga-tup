@@ -10,7 +10,9 @@ import { Data, Meta } from "../../types.js"
 // do the thing
 async function prompt(iD: Data): Promise<Data> {
   await promptContinue("Continue with the update?")
-  iD.module.meta = await moduleTypeCollect(iD.module.meta)
+  while (iD.module.meta.type === "") {
+    iD.module.meta = await moduleTypeCollect(iD.module.meta)
+  }
   return iD
 }
 

@@ -2,7 +2,7 @@
 import chalk from 'chalk'
 
 // types
-import { Msgs } from "../types.js"
+import { Msgs, ResultMsgs } from "../types.js"
 
 // data setup
 const log = console.log
@@ -11,7 +11,14 @@ const cWarn = chalk.yellow
 const cErr = chalk.bold.red
 
 // do the thing
-async function renderMessages(msgs: Msgs) { 
+async function renderMessages(msgs: Msgs | ResultMsgs) {
+  if ("unchanged" in msgs) {
+    for (const msg of msgs.unchanged) {
+      await timer()
+      successMessage(msg)
+    }
+  }
+
   for (const msg of msgs.successes) {
     await timer()
     successMessage(msg)

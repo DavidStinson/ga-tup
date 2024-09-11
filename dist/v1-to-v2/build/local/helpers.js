@@ -23,9 +23,6 @@ function buildSubHeading(module, mlName) {
 }
 function removeHero(file) {
     const idx = file.indexOf(".png)");
-    const oIdx = file.indexOf(")");
-    console.log(idx + 5, oIdx + 1);
-    const noHero = file.slice(idx + 5);
-    return noHero;
+    return file.slice(idx + 5);
 }
-export { updatePrefixAndHeadline, buildLandingHeading, buildSubHeading, removeHero, };
+export { updatePrefixAndHeadline, updateHeadline, buildLandingHeading, buildSubHeading, removeHero, };

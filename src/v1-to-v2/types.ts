@@ -1,72 +1,37 @@
-interface ConfiguredPureTemplateFile {
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
-}
+// models (types)
+import {
+  PureTemplateFile,
+  MlFile,
+  ClpFile,
+  TemplateFile,
+  PklFile,
+  TemplateFileWithHeading,
+  TemplateFileWithLandingHeading,
+} from "./models/file.js"
+import { TemplateDir, MlDir, LvlUpMlDir } from "./models/dir.js"
+// types
+import { CliOptions } from "../types.js"
 
-interface ConfiguredFile {
-  readonly path: string;
-  readonly lectureTemplateUrl: string;
-  readonly labTemplateUrl: string;
-  readonly fileNameTitleCase: string;
-}
-
-interface ConfiguredDir {
-  readonly path: string;
-  readonly dirName: string;
-  readonly dirNameTitleCase: string;
-  readonly dirNameCamelCase: string;
-}
-
-interface DiskFile {
-  path: string;
-  fileContent: PromiseFulfilledResult<string>;
-}
-
-interface File {
-  type: "file";
-  path: string;
-  oldFile: string;
-  newFile: string;
-  canUpdateHeader: boolean;
-  isFound: boolean;
-  isMigrated: boolean;
-}
-
-interface TemplateFile extends File {
-  templateFile: string;
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
-}
-
-interface PureTemplateFile {
-  type: "file";
-  templateFile: string;
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
-}
-
+// do the thing
 interface Assets {
   rootAssets: string[];
-  microlessonAssets: string[];
+  mlAssets: string[];
   miscAssets: string[];
-}
-
-interface Dir {
-  type: "directory";
-  isFound: boolean;
-  path: string;
-  dirName: string;
-  dirNameTitleCase: string;
-  dirNameCamelCase: string;
-  isMigrated: boolean;
 }
 
 interface Meta {
   type: "" | "lecture" | "lab";
   typeUrl: "" | "lectureTemplateUrl" | "labTemplateUrl";
   customHeadline: boolean;
-  isMigratingLevelUp: boolean;
-  didContainFallbackClp: boolean;
+  isMigratingLvlUp: boolean;
+  containsFallbackClp: boolean;
+  createdConfigJson: boolean;
+  containsAssetsDir: boolean;
+  createdAssetsDir: boolean;
+  containsOriginalAssetsDir: boolean;
+  createdOriginalAssetsDir: boolean;
+  containsOriginalAssetsReadme: boolean;
+  createdOriginalAssetsReadme: boolean;
 }
 
 interface Module {
@@ -79,34 +44,43 @@ interface Module {
 }
 
 interface Dirs {
-  defaultLayout: Dir;
-  canvasLandingPages: Dir;
-  internalResources: Dir;
-  levelUp: Dir;
-  references: Dir;
-  videoGuide: Dir;
-  microlessons: Dir[];
-  levelUpMicrolessons: Dir[];
+  defaultLayout: TemplateDir;
+  clps: TemplateDir;
+  internalResources: TemplateDir;
+  lvlUp: TemplateDir;
+  references: TemplateDir;
+  videoGuide: TemplateDir;
+  internalData: TemplateDir;
+  mls: MlDir[];
+  lvlUpMls: LvlUpMlDir[];
 }
 
 interface Files {
   defaultLayout: TemplateFile;
-  rootReadme: TemplateFile;
-  videoHub: TemplateFile;
-  releaseNotes: TemplateFile;
-  instructorGuide: TemplateFile;
-  references: TemplateFile;
+  rootReadme: TemplateFileWithLandingHeading;
+  videoHub: TemplateFileWithHeading;
+  releaseNotes: TemplateFileWithHeading;
+  instructorGuide: TemplateFileWithHeading;
+  references: TemplateFileWithHeading;
+  pklConfig: PklFile;
+  pklMicrolessons: PklFile;
   originalAssetsReadmeTemplate: PureTemplateFile;
   fallbackCanvasLandingPageTemplate: PureTemplateFile;
-  canvasLandingPages: File[];
-  microlessons: File[];
-  levelUpMicrolessons: File[];
+  clps: ClpFile[];
+  mls: MlFile[];
+  invalidMlFiles: string[];
+  lvlUpMls: MlFile[];
+  invalidLvlUpFiles: string[];
 }
 
 interface Msgs {
   successes: string[];
   warnings: string[];
   failures: string[];
+}
+
+interface ResultMsgs extends Msgs {
+  unchanged: string[];
 }
 
 interface Env {
@@ -121,98 +95,28 @@ interface Data {
   repoMsgs: Msgs;
   env: Env;
   envMsgs: Msgs;
-}
-
-class PureTemplateFile implements PureTemplateFile {
-  type: "file";
-  templateFile: string;
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
-
-  constructor(file: ConfiguredPureTemplateFile) {
-    this.type = "file"
-    this.templateFile = ""
-    this.lectureTemplateUrl = file.lectureTemplateUrl
-    this.labTemplateUrl = file.labTemplateUrl
-  }
-}
-
-class TemplateFile implements TemplateFile {
-  type: "file";
-  path: string;
-  oldFile: string;
-  newFile: string;
-  canUpdateHeader: boolean;
-  isFound: boolean;
-  templateFile: string;
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
-  fileNameTitleCase: string;
-
-  constructor(file: ConfiguredFile) {
-    this.type = "file"
-    this.path = file.path
-    this.oldFile = ""
-    this.newFile = ""
-    this.canUpdateHeader = false
-    this.isFound = false
-    this.templateFile = ""
-    this.lectureTemplateUrl = file.lectureTemplateUrl
-    this.labTemplateUrl = file.labTemplateUrl
-    this.fileNameTitleCase = file.fileNameTitleCase
-    this.isMigrated = false
-  }
-}
-
-class File implements File {
-  type: "file";
-  path: string;
-  oldFile: string;
-  newFile: string;
-  canUpdateHeader: boolean;
-  isFound: boolean;
-
-  constructor(file: DiskFile) {
-    this.type = "file"
-    this.path = file.path
-    this.oldFile = file.fileContent.value
-    this.newFile = ""
-    this.canUpdateHeader = file.fileContent.value.startsWith("# ![")
-    this.isFound = true
-    this.isMigrated = false
-  }
-}
-
-class Dir implements Dir {
-  type: "directory";
-  isFound: boolean;
-  path: string;
-  dirName: string;
-  dirNameTitleCase: string;
-  dirNameCamelCase: string;
-
-  constructor(dir: ConfiguredDir) {
-    this.type = "directory"
-    this.isFound = false
-    this.path = dir.path
-    this.dirName = dir.dirName
-    this.dirNameTitleCase = dir.dirNameTitleCase
-    this.dirNameCamelCase = dir.dirNameCamelCase
-    this.isMigrated = false
-  }
+  resultMsgs: ResultMsgs;
+  cliOptions: CliOptions;
 }
 
 export {
-  File,
-  TemplateFile,
   PureTemplateFile,
+  PklFile,
+  TemplateFile,
+  TemplateFileWithHeading,
+  TemplateFileWithLandingHeading,
+  ClpFile,
+  MlFile,
+  TemplateDir,
+  MlDir,
+  LvlUpMlDir,
   Assets,
-  Dir,
   Meta,
   Module,
   Dirs,
   Files,
   Msgs,
+  ResultMsgs,
   Env,
   Data,
 }

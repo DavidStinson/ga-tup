@@ -1,72 +1,24 @@
-// node
-import { readdir } from "fs/promises";
 // local
-import { getData as getFileData } from "./file-details.js";
-import { getData as getFilesData } from "./files-details.js";
-import { getData as getIfFilesExist } from "./files-exists.js";
-import { getData as getDirs, getLevelUpMicrolessonDirData } from "./dirs.js";
-import { getData as getModule } from "./module.js";
-// config
-import { config } from "../../config.js";
-const { path } = config;
+import { getData as getModuleData } from "./module.js";
+import { getData as getTemplateDirsData } from "./dir/template.js";
+import { getData as getTemplateFilesData } from "./file/template.js";
+import { getData as getMlDirsData } from "./dir/ml.js";
+import { getData as getMlFilesData } from "./file/ml.js";
+import { getData as getLvlUpFilesData } from "./file/lvl-up.js";
+import { getData as getLvlUpDirsData } from "./dir/lvl-up.js";
+import { getData as getAssetsData } from "./file/assets.js";
+import { getData as getClpFilesData } from "./file/clp.js";
 // do the thing
 async function collect(iD) {
-    iD.files.rootReadme = await getFileData(iD.files.rootReadme);
-    iD.files.defaultLayout = await getFileData(iD.files.defaultLayout);
-    iD.assets.rootAssets = await getIfFilesExist(path.rootAssets);
-    iD.module = getModule(iD.module);
-    iD.dirs = await getDirs(iD.dirs, iD.module);
-    const mlAssetCandidates = getMicrolessonAssetPaths(iD.dirs.microlessons);
-    iD.assets.microlessonAssets = await getIfFilesExist(mlAssetCandidates);
-    if (iD.dirs.internalResources.isFound) {
-        iD.files.videoHub = await getFileData(iD.files.videoHub);
-        iD.files.releaseNotes = await getFileData(iD.files.releaseNotes);
-        iD.files.instructorGuide = await getFileData(iD.files.instructorGuide);
-        iD.assets.miscAssets.push(...(await getIfFilesExist(path.internalResourcesAssets)));
-    }
-    if (iD.dirs.references.isFound) {
-        iD.files.references = await getFileData(iD.files.references);
-        iD.assets.miscAssets.push(...(await getIfFilesExist(path.referencesAssets)));
-    }
-    if (iD.dirs.canvasLandingPages.isFound) {
-        const canvasLandingPagesPaths = await getFilePathsOfDirChildren("./canvas-landing-pages");
-        console.log(canvasLandingPagesPaths);
-        iD.files.canvasLandingPages = await getFilesData(canvasLandingPagesPaths);
-        iD.module.meta.didContainFallbackClp = canvasLandingPagesPaths.some((path) => path.includes("./canvas-landing-pages/fallback.md"));
-    }
-    if (iD.dirs.microlessons.length) {
-        const mlPagesPaths = getMicrolessonReadmePaths(iD.dirs.microlessons);
-        iD.files.microlessons = await getFilesData(mlPagesPaths);
-    }
-    if (iD.dirs.levelUp.isFound) {
-        const levelUpDirPath = config.staticDir.levelUp.path;
-        const levelUpFilesPaths = await getFilePathsOfDirChildren(levelUpDirPath);
-        iD.files.levelUpMicrolessons = await getFilesData(levelUpFilesPaths);
-        // We only need to check to see if we can make microlesson dirs for level 
-        // up microlessons if the level up dir holds more than just a README.md
-        // file.
-        const levelUpDirOnlyHoldsReadmeFile = levelUpFilesPaths.length <= 1 && levelUpFilesPaths.includes("README.md");
-        const isLecture = iD.module.meta.type === "lecture";
-        if (!levelUpDirOnlyHoldsReadmeFile && isLecture) {
-            iD.dirs.levelUpMicrolessons = await getLevelUpMicrolessonDirData(iD.files.levelUpMicrolessons);
-        }
-    }
+    iD.module = await getModuleData(iD.module);
+    iD.dirs = await getTemplateDirsData(iD);
+    iD.files = await getTemplateFilesData(iD);
+    iD.dirs = await getMlDirsData(iD.dirs, iD.module);
+    iD.files = await getMlFilesData(iD);
+    iD.files = await getLvlUpFilesData(iD);
+    iD.dirs = await getLvlUpDirsData(iD);
+    iD.assets = await getAssetsData(iD);
+    iD.files = await getClpFilesData(iD);
     return iD;
-}
-function getMicrolessonReadmePaths(mls) {
-    return mls.map((ml) => `./${ml.dirName}/README.md`);
-}
-function getMicrolessonAssetPaths(mls) {
-    const mlAssetCandidates = [];
-    mls.forEach((ml) => {
-        mlAssetCandidates.push(`./${ml.dirName}/assets/hero.png`);
-        mlAssetCandidates.push(`./${ml.dirName}/assets/originals/hero.eps`);
-    });
-    return mlAssetCandidates;
-}
-async function getFilePathsOfDirChildren(dirPath) {
-    return (await readdir(dirPath, { withFileTypes: true }))
-        .filter((item) => !item.isDirectory())
-        .map((item) => `${dirPath}/${item.name}`);
 }
 export { collect };

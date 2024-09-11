@@ -2,6 +2,8 @@
 import { Command } from "commander";
 // local
 import { v1ToV2 } from "./v1-to-v2/index.js";
+// types
+import { cliOptionsSchema } from "./types.js";
 // do the thing
 async function main() {
     const cL = new Command();
@@ -10,9 +12,15 @@ async function main() {
     cL.description("A template updater for GA's modular technical content.");
     cL.command("update", { isDefault: true })
         .description("Update this repo from version 1 to version 2 of the template")
-        .action(async () => {
-        await v1ToV2();
+        .option("--verbose", "Enable verbose output", false)
+        .action(async (cliOptions) => {
+        const validatedCliOptions = validateCliOptions(cliOptions);
+        await v1ToV2(validatedCliOptions);
     });
     cL.parse();
+}
+function validateCliOptions(cliOptions) {
+    const parsedCliOptions = cliOptionsSchema.parse(cliOptions);
+    return parsedCliOptions;
 }
 main();

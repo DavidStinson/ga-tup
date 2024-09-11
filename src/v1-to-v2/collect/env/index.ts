@@ -1,6 +1,6 @@
 // node
-import util from "util"
-import { exec } from "child_process"
+import util from "node:util"
+import { exec } from "node:child_process"
 
 // types
 import { Data } from "../../types.js"
@@ -15,7 +15,7 @@ async function collect(iD: Data): Promise<Data> {
 
 async function getPklInstalled(): Promise<boolean> {
   try {
-    const { stdout} = await execAsync("pkl --version")
+    const { stdout } = await execAsync("pkl --version")
     return stdout ? true : false
   } catch (error) {
     return false

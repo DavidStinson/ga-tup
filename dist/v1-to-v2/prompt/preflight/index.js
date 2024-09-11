@@ -5,7 +5,9 @@ import { select } from "@inquirer/prompts";
 // do the thing
 async function prompt(iD) {
     await promptContinue("Continue with the update?");
-    iD.module.meta = await moduleTypeCollect(iD.module.meta);
+    while (iD.module.meta.type === "") {
+        iD.module.meta = await moduleTypeCollect(iD.module.meta);
+    }
     return iD;
 }
 async function moduleTypeCollect(meta) {

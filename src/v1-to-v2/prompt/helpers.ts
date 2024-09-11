@@ -5,7 +5,7 @@ import os from "node:os"
 import { confirm } from "@inquirer/prompts"
 
 // types
-import { Dir } from "../types.js"
+import { MlFile } from "../types.js"
 
 async function promptContinue(msg: string) {
   try {
@@ -18,11 +18,11 @@ async function promptContinue(msg: string) {
   }
 }
 
-function getMlNamesForConsole(mls: Dir[]): string {
+function getMlNamesForConsole(mls: MlFile[]): string {
   let mlNames = ""
   mls.forEach((ml, idx) => {
     const isLast = idx === mls.length - 1
-    mlNames += `  ${ml.dirNameTitleCase}${isLast ? "" : os.EOL}`
+    mlNames += `    ${ml.displayName}${isLast ? "" : os.EOL}`
   })
 
   return mlNames.trimStart()

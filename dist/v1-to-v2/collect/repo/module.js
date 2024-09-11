@@ -1,21 +1,32 @@
 // node
-import path from "path";
+import path from "node:path";
 // npm
-import { titleCase } from "title-case";
 import { camelCase } from "change-case";
 // local
-import { fixCommonWords } from "./helpers.js";
-function getData(module) {
+import { makeTitleCase, getFilePathsOfDirChildren, checkForTemplateAssetItems } from "./helpers.js";
+async function getData(module) {
     try {
         const moduleDir = path.basename(path.resolve());
-        const noDashName = titleCase(moduleDir).replaceAll("-", " ");
-        const dirNameTitleCase = fixCommonWords(noDashName);
+        const dirNameTitleCase = makeTitleCase(moduleDir);
+        const canvasLandingPagesPaths = await getFilePathsOfDirChildren("./canvas-landing-pages");
+        const clpFallbackExists = canvasLandingPagesPaths.some((path) => path.includes("./canvas-landing-pages/fallback.md"));
+        const contains = await checkForTemplateAssetItems(moduleDir);
         return {
             ...module,
             headline: dirNameTitleCase,
             dirName: moduleDir,
             dirNameTitleCase: dirNameTitleCase,
             dirNameCamelCase: camelCase(moduleDir),
+            meta: {
+                ...module.meta,
+                containsFallbackClp: clpFallbackExists,
+                containsAssetsDir: contains.assets,
+                createdAssetsDir: false,
+                containsOriginalAssetsDir: contains.originalAssets,
+                createdOriginalAssetsDir: false,
+                containsOriginalAssetsReadme: contains.originalAssetsReadme,
+                createdOriginalAssetsReadme: false,
+            }
         };
     }
     catch (error) {

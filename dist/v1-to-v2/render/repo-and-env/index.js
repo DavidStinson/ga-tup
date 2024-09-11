@@ -11,7 +11,7 @@ async function render(iD) {
     const msgs = mergeMsgArrays(iD.envMsgs, iD.repoMsgs);
     await renderMessages(msgs);
     if (!msgs.failures.length) {
-        log(cSuccess.bold('🚀 Massive success! This module can be updated with minimal manual configuration'));
+        log(cSuccess.bold('🚀 Massive success! This module can be updated with minimal manual configuration.'));
     }
     else {
         log(cErr('💥 This module has problems that you must manually resolve.'));
