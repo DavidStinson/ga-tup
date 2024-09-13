@@ -5,19 +5,16 @@ import { titleCase } from "title-case";
 // config
 import { config } from "../../config.js";
 function build(files, module) {
-    files.pklConfig = buildPklConfig(files, module);
-    files.pklMicrolessons = buildPklMicrolessons(files);
+    const validMls = files.mls.filter(ml => ml.isFound);
+    const movingLvlUpMls = files.lvlUpMls.filter(ml => (ml.shouldMove && ml.canMoveOrCreate));
+    const allMlsToWrite = [...validMls, ...movingLvlUpMls];
+    allMlsToWrite.sort((a, b) => a.deliveryOrder - b.deliveryOrder);
+    files.pklConfig = buildPklConfig(files, allMlsToWrite, module);
+    files.pklMicrolessons = buildPklMicrolessons(files, allMlsToWrite);
     return files;
 }
-function buildPklConfig(files, module) {
-    const mls = files.mls.filter(ml => ml.isFound)
-        .map((ml, idx, arr) => {
-        const isLast = idx === arr.length - 1;
-        return `      mls.${ml.camelCaseName}${!isLast ? os.EOL : ""}`;
-    });
-    const lvlUpMls = files.lvlUpMls
-        .filter(ml => ml.shouldMove && ml.canMoveOrCreate)
-        .map((ml, idx, arr) => {
+function buildPklConfig(files, mlsToWrite, module) {
+    const mls = mlsToWrite.map((ml, idx, arr) => {
         const isLast = idx === arr.length - 1;
         return `      mls.${ml.camelCaseName}${!isLast ? os.EOL : ""}`;
     });
@@ -37,7 +34,7 @@ function buildPklConfig(files, module) {
     name = "fallback"
     microlessons {
       // add microlessons here, in the order they should be delivered
-${mls.join("")}${lvlUpMls.join("")}
+${mls.join("")}
     }
   }
 }
@@ -50,19 +47,8 @@ ${courses}
 `;
     return files.pklConfig;
 }
-function buildPklMicrolessons(files) {
-    const mls = files.mls.filter(ml => ml.isFound)
-        .map(ml => (`${ml.camelCaseName} = new Template.Microlesson {
-  friendlyName = "${ml.titleCaseName}"
-  dirName = "${ml.kebabName}"
-  type = "Content"
-  videoUrl = ""
-}
-
-`));
-    const lvlUpMls = files.lvlUpMls
-        .filter(ml => (ml.shouldMove && ml.canMoveOrCreate))
-        .map(ml => (`${ml.camelCaseName} = new Template.Microlesson {
+function buildPklMicrolessons(files, mlsToWrite) {
+    const mls = mlsToWrite.map(ml => (`${ml.camelCaseName} = new Template.Microlesson {
   friendlyName = "${ml.titleCaseName}"
   dirName = "${ml.kebabName}"
   type = "Content"
@@ -74,7 +60,7 @@ function buildPklMicrolessons(files) {
     files.pklMicrolessons.newFileContent =
         `${importTemplate}
 ${files.pklMicrolessons.templateFile}
-${mls.join("")}${lvlUpMls.join("")}`;
+${mls.join("")}`;
     return files.pklMicrolessons;
 }
 export { build };

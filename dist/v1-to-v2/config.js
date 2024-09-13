@@ -118,6 +118,10 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/default-html.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/default-html.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: false,
+            requiresManualMigrationOnCreateMsg: "",
         },
         rootReadme: {
             fileName: "README",
@@ -130,6 +134,11 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/lecture-root-readme.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/lab-root-readme.txt`,
+            requiresManualMigrationOnUpdate: true,
+            requiresManualMigrationOnUpdateMsg: `Content in this file will need to be copied from the original content layout and placed into the new sections.
+    The original content can be found below the '-- tktk old file content below this line --' line in this file.`,
+            requiresManualMigrationOnCreate: true,
+            requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
         },
         videoHub: {
             fileName: "video-hub",
@@ -142,6 +151,10 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/video-hub.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/video-hub.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: false,
+            requiresManualMigrationOnCreateMsg: "If any video content exists in this module, it will need to be added to this document.",
         },
         releaseNotes: {
             fileName: "release-notes",
@@ -154,6 +167,10 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/lecture-release-notes.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/lab-release-notes.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: true,
+            requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
         },
         instructorGuide: {
             fileName: "instructor-guide",
@@ -166,6 +183,10 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/instructor-guide.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/instructor-guide.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: true,
+            requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
         },
         references: {
             fileName: "references",
@@ -178,6 +199,10 @@ const config = {
             foundIn: ["lecture"],
             lectureTemplateUrl: `${templateFilesBaseURL}/references.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/references.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: true,
+            requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
         },
         pklConfig: {
             fileName: "config",
@@ -190,6 +215,10 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/pkl-config.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/pkl-config.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: false,
+            requiresManualMigrationOnCreateMsg: "",
         },
         pklMicrolessons: {
             fileName: "microlessons",
@@ -202,6 +231,10 @@ const config = {
             foundIn: ["lecture", "lab"],
             lectureTemplateUrl: `${templateFilesBaseURL}/pkl-microlessons.txt`,
             labTemplateUrl: `${templateFilesBaseURL}/pkl-microlessons.txt`,
+            requiresManualMigrationOnUpdate: false,
+            requiresManualMigrationOnUpdateMsg: "",
+            requiresManualMigrationOnCreate: false,
+            requiresManualMigrationOnCreateMsg: "",
         },
     },
     pureTemplateFile: {

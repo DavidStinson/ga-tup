@@ -23,7 +23,6 @@ async function getData<T extends TemplateFile | TemplateFileWithHeading>(
 
     fileData.templateFile = await templateFileData.text()
     fileData.templateFileFetched = true
-    fileData.canUpdateContent = true
 
     return fileData
   } catch (error) {

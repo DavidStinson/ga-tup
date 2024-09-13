@@ -9,7 +9,6 @@ import { Module, MlFile } from "../../types.js"
 
 // do the thing
 function build(mls: MlFile[], module: Module): MlFile[] {
-
   const migratedPages = migrateExistingPages(mls, module)
 
   return migratedPages

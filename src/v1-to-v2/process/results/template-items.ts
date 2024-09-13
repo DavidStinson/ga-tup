@@ -1,5 +1,16 @@
 // types
-import { Data, ResultMsgs, TemplateFile, Meta, TemplateDir, Module } from "../../types.js"
+import { 
+  Data,
+  ResultMsgs,
+  TemplateFile,
+  Meta,
+  TemplateDir,
+  Module,
+  PklFile,
+  Files,
+  TemplateFileWithHeading
+} from "../../types.js"
+
 
 // local
 import { processTemplateDir } from "./helpers.js"
@@ -24,11 +35,11 @@ function process(iD: Data): ResultMsgs {
   iD.resultMsgs = processTemplateDir(
     iD.resultMsgs, dirs.internalData, verbose
   )
-  iD.resultMsgs = processTemplateFile(
-    iD.resultMsgs, files.pklConfig, verbose
+  iD.resultMsgs = processPklFile(
+    iD.resultMsgs, files.pklConfig, files, verbose
   )
-  iD.resultMsgs = processTemplateFile(
-    iD.resultMsgs, files.pklMicrolessons, verbose
+  iD.resultMsgs = processPklFile(
+    iD.resultMsgs, files.pklMicrolessons, files, verbose
   )
   iD.resultMsgs = processConfigJson(iD.resultMsgs,iD.module.meta)
   iD.resultMsgs = processTemplateFileWithHeading(
@@ -58,24 +69,174 @@ function process(iD: Data): ResultMsgs {
 function processTemplateFile(
   msgs: ResultMsgs, file: TemplateFile, verbose: boolean
 ): ResultMsgs {
-  // const createdOrUpdated = file.isFound && file.didMoveOrCreate 
-  //   ? "updated"
-  //   : file.isFound && file.
-  const templateFileNotFetchedMsg = `The ${file.displayName} file at ${file.desiredPath} could not be fetched from the remote template repo. 
-    However, you opted to continue with the update. This file will require manual updates to complete work on it.`
-  const pklFileMsg = `The ${file.displayName} file at ${file.desiredPath} was`
+  const templateFileNotFetchedMsg = `The ${file.displayName} file at ${file.curPath} could not be fetched from the remote template repo. 
+    However, you opted to continue with the update. No work was done on this file, and you will need to create or update the file manually.`
+  const foundAndUpdatedMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated and no additional work is required.`
+  const foundButNotUpdated = `The ${file.displayName} file at ${file.desiredPath} was found but could not be updated. 
+    You will need to update the file manually.`
+  const shouldButCanNotCreateMsg = `The ${file.displayName} file at ${file.desiredPath} can not be created automatically.
+    You will need to create the file manually.`
+  const shouldButDidNotCreateMsg = `Something went wrong creating the ${file.displayName} file at ${file.desiredPath}.
+    You will need to create the file manually.`
+  const shouldAndDidCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was created and no additional work is required.`
+  const notFoundAndShouldNotCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was not found and you opted not to create it.
+    You will need to create the file manually.`
+  const somethingWentWrongMsg = `Something went wrong while working on the ${file.displayName} file.
+    You will need to create or update the file manually.`
 
-
-  if (file.didMoveOrCreate && !file.templateFileFetched) {
+  if (!file.templateFileFetched) {
     msgs.failures.push(templateFileNotFetchedMsg)
+  } else if (file.isFound && !file.didUpdateInPlace) {
+    msgs.failures.push(foundButNotUpdated)
+  } else if (file.isFound && file.didUpdateInPlace) {
+    msgs.successes.push(foundAndUpdatedMsg)
+  } else if (file.shouldCreate && !file.canMoveOrCreate) {
+    msgs.failures.push(shouldButCanNotCreateMsg)
+  } else if (file.shouldCreate && !file.didMoveOrCreate) {
+    msgs.failures.push(shouldButDidNotCreateMsg)
+  } else if (file.shouldCreate && file.didMoveOrCreate) {
+    msgs.successes.push(shouldAndDidCreateMsg)
+  } else if (!file.isFound && !file.shouldCreate) {
+    msgs.failures.push(notFoundAndShouldNotCreateMsg)
+  } else {
+    msgs.failures.push(somethingWentWrongMsg)
   }
-  
+
+  return msgs
+}
+
+function processPklFile(
+  msgs: ResultMsgs, file: PklFile, files: Files, verbose: boolean
+): ResultMsgs {
+  const unorderedMls = files.mls.filter(ml => (
+    ml.deliveryOrder === -1
+  ))
+  const unorderedLvlUpMls = files.lvlUpMls.filter(ml => (
+    ml.deliveryOrder === -1
+  ))
+
+  const allUnorderedMls = [...unorderedMls, ...unorderedLvlUpMls]
+
+  const anyUnorderedMls = allUnorderedMls.length > 0
+
+  const templateFileNotFetchedMsg = `The ${file.displayName} file at ${file.curPath} could not be fetched from the remote template repo. 
+  However, you opted to continue with the update. No work was done on this file, and you will need to create or update the file manually.`
+  const foundButNotUpdated = `The ${file.displayName} file at ${file.desiredPath} was found but could not be updated. 
+    You will need to update the file manually.`
+  const foundAndUpdatedMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated and no additional work is required.`
+  const foundAndUpdatedWithUnorderedMlsMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated but some microlessons are not in the correct order.
+    You will need to update the file manually.`
+  const shouldButCanNotCreateMsg = `The ${file.displayName} file at ${file.desiredPath} can not be created automatically.
+    You will need to create the file manually.`
+  const shouldButDidNotCreateMsg = `Something went wrong creating the ${file.displayName} file at ${file.desiredPath}.
+    You will need to create the file manually.`
+  const shouldAndDidCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was created and no additional work is required.`
+  const shouldAndDidCreateWithUnorderedMlsMsg = `The ${file.displayName} file at ${file.desiredPath} was created but some microlessons are not in the correct order.
+    You will need to update the file manually.`
+  const notFoundAndShouldNotCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was not found and you opted not to create it.
+    You will need to create the file manually.`
+  const somethingWentWrongMsg = `Something went wrong while working on the ${file.displayName} file.
+    You will need to create or update the file manually.`
+
+  if (!file.templateFileFetched) {
+    msgs.failures.push(templateFileNotFetchedMsg)
+  } else if (file.isFound && !file.didUpdateInPlace) {
+    msgs.failures.push(foundButNotUpdated)
+  } else if (
+    file.isFound && 
+    file.didUpdateInPlace &&
+    (file.type === "PklFile" && !anyUnorderedMls)
+  ) {
+    msgs.successes.push(foundAndUpdatedMsg)
+  } else if (
+    file.isFound &&
+    file.didUpdateInPlace &&
+    (file.type === "PklFile" && anyUnorderedMls)
+  ) {
+    msgs.warnings.push(foundAndUpdatedWithUnorderedMlsMsg)
+  } else if (file.shouldCreate && !file.canMoveOrCreate) {
+    msgs.failures.push(shouldButCanNotCreateMsg)
+  } else if (file.shouldCreate && !file.didMoveOrCreate) {
+    msgs.failures.push(shouldButDidNotCreateMsg)
+  } else if (
+    file.shouldCreate &&
+    file.didMoveOrCreate &&
+    (file.type === "PklFile" && !anyUnorderedMls)
+  ) {
+    msgs.successes.push(shouldAndDidCreateMsg)
+  } else if (
+    file.shouldCreate &&
+    file.didMoveOrCreate &&
+    (file.type === "PklFile" && anyUnorderedMls)
+  ) {
+    msgs.warnings.push(shouldAndDidCreateWithUnorderedMlsMsg)
+  } else if (!file.isFound && !file.shouldCreate) {
+    msgs.failures.push(notFoundAndShouldNotCreateMsg)
+  } else {
+    msgs.failures.push(somethingWentWrongMsg)
+  }
+
   return msgs
 }
 
 function processTemplateFileWithHeading(
-  msgs: ResultMsgs, file: TemplateFile, verbose: boolean
+  msgs: ResultMsgs, file: TemplateFileWithHeading, verbose: boolean
 ): ResultMsgs {
+  const templateFileNotFetchedMsg = `The ${file.displayName} file at ${file.curPath} could not be fetched from the remote template repo. 
+  However, you opted to continue with the update. No work was done on this file, and you will need to create or update the file manually.`
+  const foundButNotUpdated = `The ${file.displayName} file at ${file.desiredPath} was found but could not be updated. 
+    You will need to update the file manually.`
+  const foundAndUpdatedMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated and no additional work is required.`
+  const foundAndUpdatedWithBadHeadingMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated but the heading is incorrect.
+    You will need to update the file manually.`
+  const shouldButCanNotCreateMsg = `The ${file.displayName} file at ${file.desiredPath} can not be created automatically.
+    You will need to create the file manually.`
+  const shouldButDidNotCreateMsg = `Something went wrong creating the ${file.displayName} file at ${file.desiredPath}.
+    You will need to create the file manually.`
+  const shouldAndDidCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was created and no additional work is required.`
+  const shouldAndDidCreateWithBadHeadingMsg = `The ${file.displayName} file at ${file.desiredPath} was created but the heading is incorrect.
+    You will need to update the file manually.`
+  const notFoundAndShouldNotCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was not found and you opted not to create it.
+    You will need to create the file manually.`
+  const somethingWentWrongMsg = `Something went wrong while working on the ${file.displayName} file.
+    You will need to create or update the file manually.`
+
+  if (!file.templateFileFetched) {
+    msgs.failures.push(templateFileNotFetchedMsg)
+  } else if (file.isFound && !file.didUpdateInPlace) {
+    msgs.failures.push(foundButNotUpdated)
+  } else if (
+    file.isFound &&
+    file.didUpdateInPlace &&
+    ((
+      file.type === "TemplateFileWithHeading" ||
+      file.type === "TemplateFileWithLandingHeading"
+    ) && file.didUpdateHeading)
+  ) {
+    msgs.successes.push(foundAndUpdatedMsg)
+  } else if (
+    file.isFound &&
+    file.didUpdateInPlace &&
+    ((file.type === "TemplateFileWithHeading" || file.type === "TemplateFileWithLandingHeading") && !file.didUpdateHeading)
+  ) {
+    msgs.warnings.push(foundAndUpdatedWithBadHeadingMsg)
+  } else if (file.shouldCreate && !file.canMoveOrCreate) {
+    msgs.failures.push(shouldButCanNotCreateMsg)
+  } else if (file.shouldCreate && !file.didMoveOrCreate) {
+    msgs.failures.push(shouldButDidNotCreateMsg)
+  } else if (
+    file.shouldCreate && file.didMoveOrCreate && file.didUpdateHeading
+  ) {
+    msgs.successes.push(shouldAndDidCreateMsg)
+  } else if (
+    file.shouldCreate && file.didMoveOrCreate && !file.didUpdateHeading
+  ) {
+    msgs.warnings.push(shouldAndDidCreateWithBadHeadingMsg)
+  } else if (!file.isFound && !file.shouldCreate) {
+    msgs.failures.push(notFoundAndShouldNotCreateMsg)
+  } else {
+    msgs.failures.push(somethingWentWrongMsg)
+  }
 
   return msgs
 }

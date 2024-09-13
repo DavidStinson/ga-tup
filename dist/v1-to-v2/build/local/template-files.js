@@ -11,9 +11,9 @@ function build(iD) {
     return iD.files;
 }
 function buildNewDefaultLayout(file, module) {
-    if ((!file.shouldUpdateContent || !file.canUpdateContent)) {
+    // If we couldn't fetch the template file, we shouldn't do anything
+    if (!file.templateFileFetched)
         return file;
-    }
     const moduleTitle = module.prefix
         ? `${module.prefix} - ${module.headline}`
         : module.headline;
@@ -23,10 +23,17 @@ function buildNewDefaultLayout(file, module) {
 function buildNewRootReadme(iD) {
     const { files, module, } = iD;
     const { rootReadme } = files;
+    // If we couldn't fetch the template file, we shouldn't do anything
+    if (!rootReadme.templateFileFetched)
+        return rootReadme;
     if (rootReadme.isFound && rootReadme.canUpdateHeading) {
         const oldFile = removeHero(rootReadme.curFileContent);
         const template = updatePrefixAndHeadline(rootReadme.templateFile, module);
-        rootReadme.newFileContent = oldFile + template;
+        rootReadme.newFileContent = `${template}
+    
+    -- tktk old file content below this line --
+
+    ${oldFile}`;
         rootReadme.didUpdateHeading = true;
     }
     else if (rootReadme.isFound) {
@@ -50,7 +57,8 @@ function buildNewFile(file, module) {
     else if (file.isFound) {
         file.newFileContent = heading + file.curFileContent;
     }
-    else {
+    else if (file.templateFileFetched) {
+        // If we couldn't fetch the template file, we shouldn't do anything
         const template = updateHeadline(file.templateFile, module);
         file.newFileContent = template;
         file.didUpdateHeading = true;

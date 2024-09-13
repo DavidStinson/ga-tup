@@ -5,29 +5,32 @@ import os from "node:os"
 import { titleCase } from "title-case"
 
 // types
-import { Files, Module, PklFile } from "../../types.js"
+import { Files, Module, PklFile, MlFile } from "../../types.js"
 
 // config
 import { config } from "../../config.js"
 
 function build(files: Files, module: Module): Files {
-  files.pklConfig = buildPklConfig(files, module)
-  files.pklMicrolessons = buildPklMicrolessons(files)
+  const validMls = files.mls.filter(ml => ml.isFound)
+  const movingLvlUpMls = files.lvlUpMls.filter(ml => (
+    ml.shouldMove && ml.canMoveOrCreate
+  ))
+  const allMlsToWrite = [...validMls, ...movingLvlUpMls]
+
+  allMlsToWrite.sort((a, b) => a.deliveryOrder - b.deliveryOrder)
+
+  files.pklConfig = buildPklConfig(files, allMlsToWrite, module)
+  files.pklMicrolessons = buildPklMicrolessons(files, allMlsToWrite)
   return files
 }
 
-function buildPklConfig(files: Files, module: Module): PklFile {
-  const mls = files.mls.filter(ml => ml.isFound)
-    .map((ml, idx, arr) => {
-      const isLast = idx === arr.length - 1
-      return `      mls.${ml.camelCaseName}${!isLast ? os.EOL : ""}`
-    })
-  const lvlUpMls = files.lvlUpMls
-    .filter(ml => ml.shouldMove && ml.canMoveOrCreate)
-    .map((ml, idx, arr) => {
-      const isLast = idx === arr.length - 1
-      return `      mls.${ml.camelCaseName}${!isLast ? os.EOL : ""}`
-    })
+function buildPklConfig(
+  files: Files, mlsToWrite: MlFile[], module: Module
+): PklFile {
+  const mls = mlsToWrite.map((ml, idx, arr) => {
+    const isLast = idx === arr.length - 1
+    return `      mls.${ml.camelCaseName}${!isLast ? os.EOL : ""}`
+  })
 
   const amends = `amends "${config.vars.pklTemplateUrl}"${os.EOL}`
 
@@ -49,7 +52,7 @@ function buildPklConfig(files: Files, module: Module): PklFile {
     name = "fallback"
     microlessons {
       // add microlessons here, in the order they should be delivered
-${mls.join("")}${lvlUpMls.join("")}
+${mls.join("")}
     }
   }
 }
@@ -65,22 +68,8 @@ ${courses}
   return files.pklConfig
 }
 
-function buildPklMicrolessons(files: Files): PklFile {
-  const mls = files.mls.filter(ml => ml.isFound)
-    .map(ml => (
-`${ml.camelCaseName} = new Template.Microlesson {
-  friendlyName = "${ml.titleCaseName}"
-  dirName = "${ml.kebabName}"
-  type = "Content"
-  videoUrl = ""
-}
-
-`))
-const lvlUpMls = files.lvlUpMls
-  .filter(ml => (
-    ml.shouldMove && ml.canMoveOrCreate
-  ))
-  .map(ml => (
+function buildPklMicrolessons(files: Files, mlsToWrite: MlFile[]): PklFile {
+  const mls = mlsToWrite.map(ml => (
 `${ml.camelCaseName} = new Template.Microlesson {
   friendlyName = "${ml.titleCaseName}"
   dirName = "${ml.kebabName}"
@@ -96,7 +85,7 @@ const lvlUpMls = files.lvlUpMls
   files.pklMicrolessons.newFileContent =
 `${importTemplate}
 ${files.pklMicrolessons.templateFile}
-${mls.join("")}${lvlUpMls.join("")}`
+${mls.join("")}`
 
   return files.pklMicrolessons
 }

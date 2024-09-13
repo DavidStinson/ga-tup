@@ -17,6 +17,7 @@ interface Assets {
   rootAssets: string[];
   mlAssets: string[];
   miscAssets: string[];
+  undeletedAssets: string[];
 }
 
 interface Meta {

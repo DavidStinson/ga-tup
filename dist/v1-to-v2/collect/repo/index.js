@@ -6,6 +6,7 @@ import { getData as getMlDirsData } from "./dir/ml.js";
 import { getData as getMlFilesData } from "./file/ml.js";
 import { getData as getLvlUpFilesData } from "./file/lvl-up.js";
 import { getData as getLvlUpDirsData } from "./dir/lvl-up.js";
+import { getData as getMlOrder } from "./file/ml-order.js";
 import { getData as getAssetsData } from "./file/assets.js";
 import { getData as getClpFilesData } from "./file/clp.js";
 // do the thing
@@ -17,6 +18,7 @@ async function collect(iD) {
     iD.files = await getMlFilesData(iD);
     iD.files = await getLvlUpFilesData(iD);
     iD.dirs = await getLvlUpDirsData(iD);
+    iD.files = await getMlOrder(iD);
     iD.assets = await getAssetsData(iD);
     iD.files = await getClpFilesData(iD);
     return iD;

@@ -42,6 +42,7 @@ class PathedFile extends File {
         this.canMoveOrCreate = false;
         this.didMoveOrCreate = false;
         this.isFound = file.isFound;
+        this.didUpdateInPlace = false;
     }
 }
 class MlFile extends PathedFile {
@@ -60,6 +61,7 @@ class MlFile extends PathedFile {
         this.kebabName = file.kebabName;
         this.titleCaseName = file.titleCaseName;
         this.camelCaseName = file.camelCaseName;
+        this.deliveryOrder = 0;
         this.isLvlUp = file.isLvlUp;
         this.shouldMove = file.isLvlUp;
         this.canUpdateHeading = checkCanHeadingUpdate(file.curFileContent);
@@ -114,6 +116,10 @@ class PklFile extends TemplateFile {
             foundIn: file.foundIn,
             lectureTemplateUrl: file.lectureTemplateUrl,
             labTemplateUrl: file.labTemplateUrl,
+            requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
+            requiresManualMigrationOnUpdateMsg: file.requiresManualMigrationOnUpdateMsg,
+            requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
+            requiresManualMigrationOnCreateMsg: file.requiresManualMigrationOnCreateMsg,
         });
         this.type = "PklFile";
     }
@@ -131,10 +137,22 @@ class TemplateFileWithHeading extends TemplateFile {
             foundIn: file.foundIn,
             lectureTemplateUrl: file.lectureTemplateUrl,
             labTemplateUrl: file.labTemplateUrl,
+            requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
+            requiresManualMigrationOnUpdateMsg: file.requiresManualMigrationOnUpdateMsg,
+            requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
+            requiresManualMigrationOnCreateMsg: file.requiresManualMigrationOnCreateMsg,
         });
         this.type = "TemplateFileWithHeading";
         this.canUpdateHeading = checkCanHeadingUpdate(file.curFileContent);
         this.didUpdateHeading = false;
+        this.requiresManualMigrationOnUpdate =
+            file.requiresManualMigrationOnUpdate;
+        this.requiresManualMigrationOnUpdateMsg =
+            file.requiresManualMigrationOnUpdateMsg;
+        this.requiresManualMigrationOnCreate =
+            file.requiresManualMigrationOnCreate;
+        this.requiresManualMigrationOnCreateMsg =
+            file.requiresManualMigrationOnCreateMsg;
     }
 }
 class TemplateFileWithLandingHeading extends TemplateFileWithHeading {
@@ -150,6 +168,10 @@ class TemplateFileWithLandingHeading extends TemplateFileWithHeading {
             foundIn: file.foundIn,
             lectureTemplateUrl: file.lectureTemplateUrl,
             labTemplateUrl: file.labTemplateUrl,
+            requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
+            requiresManualMigrationOnUpdateMsg: file.requiresManualMigrationOnUpdateMsg,
+            requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
+            requiresManualMigrationOnCreateMsg: file.requiresManualMigrationOnCreateMsg,
         });
         this.type = "TemplateFileWithLandingHeading";
     }

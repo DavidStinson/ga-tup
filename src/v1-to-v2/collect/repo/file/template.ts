@@ -59,7 +59,6 @@ async function getTemplateFileData<
       curPath: file.desiredPath,
       curFileContent: currentFile,
       isFound: true,
-      shouldUpdateContent: true,
       ...((
         file.type === "TemplateFileWithHeading" || 
         file.type === "TemplateFileWithLandingHeading") && {

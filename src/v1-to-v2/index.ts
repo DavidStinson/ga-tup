@@ -6,7 +6,7 @@ import { processEnv, processRepo, processResults } from "./process/index.js"
 import { 
   renderPreflight, renderRepoAndEnv, renderResults
 } from "./render/index.js"
-import { buildLocal, buildRepo } from "./build/index.js"
+import { buildLocal, buildToDisk } from "./build/index.js"
 
 // types
 import {
@@ -58,6 +58,7 @@ const assets: Assets = {
   rootAssets: [],
   mlAssets: [],
   miscAssets: [],
+  undeletedAssets: [],
 }
 
 const dirs: Dirs = {
@@ -145,7 +146,7 @@ async function v1ToV2(cliOptions: CliOptions) {
   const repoAndEnvData = await repoAndEnvPrompt(processedEnvData)
   const collectedRemoteData = await collectRemote(repoAndEnvData)
   const builtData = await buildLocal(collectedRemoteData)
-  const finalData = await buildRepo(builtData)
+  const finalData = await buildToDisk(builtData)
   const resultsData = await processResults(finalData)
 }
 

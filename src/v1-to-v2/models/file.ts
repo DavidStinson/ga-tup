@@ -83,6 +83,7 @@ interface PathedFile extends File {
   canMoveOrCreate: boolean;
   didMoveOrCreate: boolean;
   isFound: boolean;
+  didUpdateInPlace: boolean;
 }
 
 class PathedFile extends File implements PathedFile {
@@ -101,6 +102,7 @@ class PathedFile extends File implements PathedFile {
     this.canMoveOrCreate = false
     this.didMoveOrCreate = false
     this.isFound = file.isFound
+    this.didUpdateInPlace = false
   }
 }
 
@@ -110,6 +112,7 @@ interface MlFile extends PathedFile {
   kebabName: string;
   titleCaseName: string;
   camelCaseName: string;
+  deliveryOrder: number;
   isLvlUp: boolean;
   shouldMove: boolean;
   canUpdateHeading: boolean;
@@ -132,6 +135,7 @@ class MlFile extends PathedFile {
     this.kebabName = file.kebabName
     this.titleCaseName = file.titleCaseName
     this.camelCaseName = file.camelCaseName
+    this.deliveryOrder = 0
     this.isLvlUp = file.isLvlUp
     this.shouldMove = file.isLvlUp
     this.canUpdateHeading = checkCanHeadingUpdate(file.curFileContent)
@@ -173,9 +177,6 @@ interface TemplateFile extends PathedFile {
   templateFileFetched: boolean;
   lectureTemplateUrl: string;
   labTemplateUrl: string;
-  shouldUpdateContent: boolean;
-  canUpdateContent: boolean;
-  didUpdateContent: boolean;
 }
 
 class TemplateFile extends PathedFile implements TemplateFile {
@@ -215,6 +216,12 @@ class PklFile extends TemplateFile implements PklFile {
       foundIn: file.foundIn,
       lectureTemplateUrl: file.lectureTemplateUrl,
       labTemplateUrl: file.labTemplateUrl,
+      requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
+      requiresManualMigrationOnUpdateMsg: 
+        file.requiresManualMigrationOnUpdateMsg,
+      requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
+      requiresManualMigrationOnCreateMsg: 
+      file.requiresManualMigrationOnCreateMsg,
     })
     this.type = "PklFile"
   }
@@ -224,6 +231,10 @@ interface TemplateFileWithHeading extends TemplateFile {
   type: "TemplateFileWithHeading" | "TemplateFileWithLandingHeading";
   canUpdateHeading: boolean;
   didUpdateHeading: boolean;
+  requiresManualMigrationOnUpdate: boolean;
+  requiresManualMigrationOnUpdateMsg: string;
+  requiresManualMigrationOnCreate: boolean;
+  requiresManualMigrationOnCreateMsg: string;
 }
 
 class TemplateFileWithHeading extends TemplateFile implements TemplateFileWithHeading {
@@ -239,10 +250,24 @@ class TemplateFileWithHeading extends TemplateFile implements TemplateFileWithHe
       foundIn: file.foundIn,
       lectureTemplateUrl: file.lectureTemplateUrl,
       labTemplateUrl: file.labTemplateUrl,
+      requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
+      requiresManualMigrationOnUpdateMsg: 
+        file.requiresManualMigrationOnUpdateMsg,
+      requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
+      requiresManualMigrationOnCreateMsg: 
+      file.requiresManualMigrationOnCreateMsg,
     })
     this.type = "TemplateFileWithHeading"
     this.canUpdateHeading = checkCanHeadingUpdate(file.curFileContent)
     this.didUpdateHeading = false
+    this.requiresManualMigrationOnUpdate = 
+      file.requiresManualMigrationOnUpdate
+    this.requiresManualMigrationOnUpdateMsg = 
+      file.requiresManualMigrationOnUpdateMsg
+    this.requiresManualMigrationOnCreate = 
+      file.requiresManualMigrationOnCreate
+    this.requiresManualMigrationOnCreateMsg = 
+      file.requiresManualMigrationOnCreateMsg
   }
 }
 
@@ -261,8 +286,14 @@ class TemplateFileWithLandingHeading extends TemplateFileWithHeading implements 
       desiredPath: file.desiredPath,
       isFound: file.isFound,
       foundIn: file.foundIn,
-      lectureTemplateUrl: file.lectureTemplateUrl,
+      lectureTemplateUrl: file.lectureTemplateUrl ,
       labTemplateUrl: file.labTemplateUrl,
+      requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
+      requiresManualMigrationOnUpdateMsg: 
+        file.requiresManualMigrationOnUpdateMsg,
+      requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
+      requiresManualMigrationOnCreateMsg: 
+      file.requiresManualMigrationOnCreateMsg,
     })
     this.type = "TemplateFileWithLandingHeading"
   }

@@ -34,7 +34,6 @@ async function buildTemplateDir(dir: TemplateDir): Promise<TemplateDir> {
   if (dir.shouldCreate && dir.canCreate) {
     dir.didCreate = await writeDirToDisk(dir.desiredPath)
   }
-
   return dir
 }
 
@@ -92,9 +91,11 @@ async function buildLvlUpMlDir(
 ): Promise<LvlUpMlDir> {
   dir.didCreate = await writeDirToDisk(dir.desiredPath)
 
-  dir = await buildAssetTemplateDirs(
-    dir, dir.desiredPath, originalAssetsReadmeTemplate
-  )
+  if (dir.didCreate) {
+    dir = await buildAssetTemplateDirs(
+      dir, dir.desiredPath, originalAssetsReadmeTemplate
+    )
+  }
   return dir
 }
 

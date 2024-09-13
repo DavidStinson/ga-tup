@@ -11,7 +11,6 @@ async function getData(fileData, urlType) {
         }
         fileData.templateFile = await templateFileData.text();
         fileData.templateFileFetched = true;
-        fileData.canUpdateContent = true;
         return fileData;
     }
     catch (error) {

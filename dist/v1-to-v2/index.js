@@ -3,7 +3,7 @@ import { preflightPrompt, repoAndEnvPrompt } from "./prompt/index.js";
 import { collectRepo, collectEnv, collectRemote } from "./collect/index.js";
 import { processEnv, processRepo, processResults } from "./process/index.js";
 import { renderPreflight, renderRepoAndEnv } from "./render/index.js";
-import { buildLocal, buildRepo } from "./build/index.js";
+import { buildLocal, buildToDisk } from "./build/index.js";
 // types
 import { PureTemplateFile, PklFile, TemplateFile, TemplateFileWithHeading, TemplateFileWithLandingHeading, TemplateDir, } from "./types.js";
 // config
@@ -35,6 +35,7 @@ const assets = {
     rootAssets: [],
     mlAssets: [],
     miscAssets: [],
+    undeletedAssets: [],
 };
 const dirs = {
     defaultLayout: new TemplateDir(templateDir.defaultLayout),
@@ -109,7 +110,7 @@ async function v1ToV2(cliOptions) {
     const repoAndEnvData = await repoAndEnvPrompt(processedEnvData);
     const collectedRemoteData = await collectRemote(repoAndEnvData);
     const builtData = await buildLocal(collectedRemoteData);
-    const finalData = await buildRepo(builtData);
+    const finalData = await buildToDisk(builtData);
     const resultsData = await processResults(finalData);
 }
 export { v1ToV2 };

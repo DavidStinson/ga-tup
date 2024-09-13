@@ -8,5 +8,9 @@ function process(iD) {
     //   !module.meta.containsFallbackClp && 
     //   files.fallbackCanvasLandingPageTemplate.templateFileFetched
     // )
+    // tktk HEY ALSO DON'T FORGET TO CHECK IF A LECTURE WAS FOUND IN THE ROOT
+    // README.md FILE. IF IT WASN'T FOUND, THEN ITS ml.mlOrder WILL BE -1.
+    // tktk ALSO ALSO DON'T FORGET TO CHECK IF THE CONFIG.JSON FILE WAS CREATED
+    // ON iD.module.meta.createdConfigJson
 }
 export { process };
