@@ -9,7 +9,7 @@ import { camelCase } from "change-case"
 import { makeTitleCase } from "../helpers.js"
 
 // types
-import { Data, Files,MlDir, MlFile } from "../../../types.js"
+import { Data, Files, MlDir, MlFile } from "../../../types.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Files> {
@@ -30,10 +30,10 @@ function getMicrolessonReadmePaths(mls: MlDir[]): string[] {
 function getInvalidMlFiles(iD: Data, mlDirNames: string[]): string[] {
   const mlDirPaths = mlDirNames.map((dir) => `./${dir}`)
   mlDirPaths.forEach(async (mlDirPath) => {
-    (await readdir(mlDirPath, { withFileTypes: true }))
+    ;(await readdir(mlDirPath, { withFileTypes: true }))
       .filter((item) => item.name !== "README.md" && item.name !== "assets")
-      .map(item => `${mlDirPath}/${item.name}`)
-      .forEach(item => {
+      .map((item) => `${mlDirPath}/${item.name}`)
+      .forEach((item) => {
         iD.files.invalidMlFiles.push(item)
       })
   })
@@ -43,23 +43,22 @@ function getInvalidMlFiles(iD: Data, mlDirNames: string[]): string[] {
 async function getMlFilesData(
   itemNames: string[],
   filepaths: string[],
-  type: "ml" | "lvl-up-ml"
+  type: "ml" | "lvl-up-ml",
 ): Promise<MlFile[]> {
   const filesContent = await Promise.allSettled(
     filepaths.map(async (filepath) => {
       return await readFile(filepath, "utf-8")
-    })
+    }),
   )
 
   return filepaths.map((filepath, idx) => {
-    const fileContent = filesContent[idx]
+    const fileContent = filesContent[idx]!
     const foundWithoutError = fileContent.status === "fulfilled"
 
-    const titleCaseName = makeTitleCase(itemNames[idx])
+    const titleCaseName = makeTitleCase(itemNames[idx]!)
 
-    const desiredPath = type === "lvl-up-ml" 
-      ? `./${itemNames[idx]}/README.md` 
-      : filepath
+    const desiredPath =
+      type === "lvl-up-ml" ? `./${itemNames[idx]}/README.md` : filepath
 
     return new MlFile({
       fileName: path.parse(filepath).name,
@@ -71,9 +70,9 @@ async function getMlFilesData(
       shouldMove: type === "lvl-up-ml",
       isFound: foundWithoutError,
       isLvlUp: type === "lvl-up-ml",
-      kebabName: itemNames[idx],
+      kebabName: itemNames[idx]!,
       titleCaseName: titleCaseName,
-      camelCaseName: camelCase(itemNames[idx]),
+      camelCaseName: camelCase(itemNames[idx]!),
     })
   })
 }

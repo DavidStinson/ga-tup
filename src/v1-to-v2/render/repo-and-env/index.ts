@@ -1,5 +1,5 @@
 // npm
-import chalk from 'chalk'
+import chalk from "chalk"
 
 // types
 import { Data, Msgs } from "../../types.js"
@@ -17,13 +17,13 @@ async function render(iD: Data): Promise<void> {
   const msgs = mergeMsgArrays(iD.envMsgs, iD.repoMsgs)
   await renderMessages(msgs)
   if (!msgs.failures.length) {
-    log(cSuccess.bold(
-      '🚀 Massive success! This module can be updated with minimal manual configuration.'
-    ))
+    log(
+      cSuccess.bold(
+        "🚀 Massive success! This module can be updated with minimal manual configuration.",
+      ),
+    )
   } else {
-    log(cErr(
-      '💥 This module has problems that you must manually resolve.'
-    ))
+    log(cErr("💥 This module has problems that you must manually resolve."))
   }
 }
 

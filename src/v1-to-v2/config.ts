@@ -3,108 +3,109 @@ const templateFilesBaseURL =
 
 // types
 interface FileData {
-  readonly fileName: string;
-  readonly fileType: string;
-  readonly displayName: string;
+  readonly fileName: string
+  readonly fileType: string
+  readonly displayName: string
 }
 
 interface PureTemplateFileData extends FileData {
-  readonly lectureTemplateUrl: string;
-  readonly labTemplateUrl: string;
+  readonly lectureTemplateUrl: string
+  readonly labTemplateUrl: string
 }
 
 interface PathedFileData extends FileData {
-  readonly desiredPath: string;
-  readonly curPath: string;
-  readonly curFileContent: string;
-  readonly isFound: boolean;
+  readonly desiredPath: string
+  readonly curPath: string
+  readonly curFileContent: string
+  readonly isFound: boolean
 }
 
 interface TemplateFileData extends PathedFileData {
-  readonly foundIn: string[];
-  readonly lectureTemplateUrl: string;
-  readonly labTemplateUrl: string;
-  readonly requiresManualMigrationOnUpdate: boolean;
-  readonly requiresManualMigrationOnUpdateMsg: string;
-  readonly requiresManualMigrationOnCreate: boolean;
-  readonly requiresManualMigrationOnCreateMsg: string;
+  readonly foundIn: string[]
+  readonly lectureTemplateUrl: string
+  readonly labTemplateUrl: string
+  readonly requiresManualMigrationOnUpdate: boolean
+  readonly requiresManualMigrationOnUpdateMsg: string
+  readonly requiresManualMigrationOnCreate: boolean
+  readonly requiresManualMigrationOnCreateMsg: string
 }
 
 interface MlFileData extends PathedFileData {
-  readonly kebabName: string;
-  readonly titleCaseName: string;
-  readonly camelCaseName: string;
-  readonly isLvlUp: boolean;
-  readonly shouldMove: boolean;
+  readonly kebabName: string
+  readonly titleCaseName: string
+  readonly camelCaseName: string
+  readonly isLvlUp: boolean
+  readonly shouldMove: boolean
 }
 
 interface DirData {
-  readonly dirName: string;
-  readonly displayName: string;
+  readonly dirName: string
+  readonly displayName: string
 }
 
 interface TemplateDirData extends DirData {
-  readonly desiredPath: string;
+  readonly desiredPath: string
   readonly foundIn: string[]
 }
 
 interface MlDirData extends DirData {
-  readonly curPath: string;
-  readonly containsReadme: boolean;
-  readonly containsAssets: boolean;
-  readonly containsOriginalAssets: boolean;
-  readonly containsOriginalAssetsReadme: boolean;
+  readonly curPath: string
+  readonly containsReadme: boolean
+  readonly containsAssets: boolean
+  readonly containsOriginalAssets: boolean
+  readonly containsOriginalAssetsReadme: boolean
 }
 
 interface LvlUpMlDirData extends MlDirData {
-  readonly desiredPath: string;
-  readonly shouldCreate: boolean;
-  readonly canCreate: boolean;
+  readonly desiredPath: string
+  readonly shouldCreate: boolean
+  readonly canCreate: boolean
 }
 
 interface Dictionary {
-  [index: string]: string;
+  [index: string]: string
 }
 
 interface Config {
   path: {
-    rootAssets: string[];
-    referencesAssets: string[];
-    internalResourcesAssets: string[];
+    rootAssets: string[]
+    referencesAssets: string[]
+    internalResourcesAssets: string[]
   }
   templateRootDirs: {
-    lecture: string[];
-    lab: string[];
+    lecture: string[]
+    lab: string[]
   }
   templateRequiredDirPaths: {
-    lecture: string[];
-    lab: string[];
+    lecture: string[]
+    lab: string[]
   }
   templateDir: {
-    defaultLayout: TemplateDirData;
-    canvasLandingPages: TemplateDirData;
-    internalResources: TemplateDirData;
-    levelUp: TemplateDirData;
-    references: TemplateDirData;
-    videoGuide: TemplateDirData;
-    internalData: TemplateDirData;
+    defaultLayout: TemplateDirData
+    canvasLandingPages: TemplateDirData
+    internalResources: TemplateDirData
+    levelUp: TemplateDirData
+    references: TemplateDirData
+    videoGuide: TemplateDirData
+    internalData: TemplateDirData
   }
   templateFile: {
-    defaultLayout: TemplateFileData;
-    rootReadme: TemplateFileData;
-    videoHub: TemplateFileData;
-    releaseNotes: TemplateFileData;
-    instructorGuide: TemplateFileData;
-    references: TemplateFileData;
-    pklConfig: TemplateFileData;
-    pklMicrolessons: TemplateFileData;
+    defaultLayout: TemplateFileData
+    rootReadme: TemplateFileData
+    videoHub: TemplateFileData
+    releaseNotes: TemplateFileData
+    instructorGuide: TemplateFileData
+    references: TemplateFileData
+    pklConfig: TemplateFileData
+    pklMicrolessons: TemplateFileData
   }
   pureTemplateFile: {
-    originalAssets: PureTemplateFileData;
-    fallbackClp: PureTemplateFileData;
+    originalAssets: PureTemplateFileData
+    fallbackClp: PureTemplateFileData
   }
   vars: {
-    pklTemplateUrl: string;
+    pklTemplateUrl: string
+    configJsonPath: string
   }
   commonWords: Dictionary
 }
@@ -184,7 +185,6 @@ const config: Config = {
       desiredPath: "./canvas-landing-pages",
       dirName: "canvas-landing-pages",
       foundIn: ["lecture", "lab"],
-
     },
     internalResources: {
       displayName: "Internal Resources",
@@ -246,10 +246,11 @@ const config: Config = {
       lectureTemplateUrl: `${templateFilesBaseURL}/lecture-root-readme.txt`,
       labTemplateUrl: `${templateFilesBaseURL}/lab-root-readme.txt`,
       requiresManualMigrationOnUpdate: true,
-      requiresManualMigrationOnUpdateMsg: `Content in this file will need to be copied from the original content layout and placed into the new sections.
+      requiresManualMigrationOnUpdateMsg: `Content in the ./README.md file will need to be copied from the original content layout and placed into the new sections.
     The original content can be found below the '-- tktk old file content below this line --' line in this file.`,
       requiresManualMigrationOnCreate: true,
-      requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
+      requiresManualMigrationOnCreateMsg:
+        "You will need to place the appropriate content into the ./README.md file.",
     },
     videoHub: {
       fileName: "video-hub",
@@ -265,7 +266,8 @@ const config: Config = {
       requiresManualMigrationOnUpdate: false,
       requiresManualMigrationOnUpdateMsg: "",
       requiresManualMigrationOnCreate: false,
-      requiresManualMigrationOnCreateMsg: "If any video content exists in this module, it will need to be added to this document.",
+      requiresManualMigrationOnCreateMsg:
+        "If any video content exists in this module, it will need to be added to the ./internal-resources/video-hub.md file.",
     },
     releaseNotes: {
       fileName: "release-notes",
@@ -281,7 +283,8 @@ const config: Config = {
       requiresManualMigrationOnUpdate: false,
       requiresManualMigrationOnUpdateMsg: "",
       requiresManualMigrationOnCreate: true,
-      requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
+      requiresManualMigrationOnCreateMsg:
+        "You will need to place the appropriate content into the ./internal-resources/release-notes.md file.",
     },
     instructorGuide: {
       fileName: "instructor-guide",
@@ -297,7 +300,8 @@ const config: Config = {
       requiresManualMigrationOnUpdate: false,
       requiresManualMigrationOnUpdateMsg: "",
       requiresManualMigrationOnCreate: true,
-      requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
+      requiresManualMigrationOnCreateMsg:
+        "You will need to place the appropriate content into the ./internal-resources/instructor-guide.md file.",
     },
     references: {
       fileName: "references",
@@ -313,7 +317,8 @@ const config: Config = {
       requiresManualMigrationOnUpdate: false,
       requiresManualMigrationOnUpdateMsg: "",
       requiresManualMigrationOnCreate: true,
-      requiresManualMigrationOnCreateMsg: "You will need to place the appropriate content into this file.",
+      requiresManualMigrationOnCreateMsg:
+        "You will need to place the appropriate content into the ./references/README.md file.",
     },
     pklConfig: {
       fileName: "config",
@@ -367,11 +372,12 @@ const config: Config = {
   vars: {
     pklTemplateUrl:
       "https://pages.git.generalassemb.ly/modular-curriculum-all-courses/universal-resources-internal/static/v2/pkl/template.pkl",
+    configJsonPath: "./internal-resources/data/config.json",
   },
   commonWords: {
     Javascript: "JavaScript",
     Github: "GitHub",
-  }
+  },
 }
 
 export {

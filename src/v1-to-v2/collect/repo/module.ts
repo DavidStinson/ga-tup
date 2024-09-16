@@ -6,25 +6,28 @@ import { camelCase } from "change-case"
 
 // local
 import {
-  makeTitleCase, getFilePathsOfDirChildren, checkForTemplateAssetItems
+  makeTitleCase,
+  getFilePathsOfDirChildren,
+  checkForTemplateAssetItems,
 } from "./helpers.js"
 
 // types
 import { Module } from "../../types.js"
 
+// do the thing
 async function getData(module: Module): Promise<Module> {
   try {
     const moduleDir = path.basename(path.resolve())
     const dirNameTitleCase = makeTitleCase(moduleDir)
     const canvasLandingPagesPaths = await getFilePathsOfDirChildren(
-      "./canvas-landing-pages"
+      "./canvas-landing-pages",
     )
-    const clpFallbackExists = canvasLandingPagesPaths.some(
-      (path) => path.includes("./canvas-landing-pages/fallback.md")
+    const clpFallbackExists = canvasLandingPagesPaths.some((path) =>
+      path.includes("./canvas-landing-pages/fallback.md"),
     )
 
-    const contains = await checkForTemplateAssetItems(moduleDir)
-  
+    const contains = await checkForTemplateAssetItems(".")
+
     return {
       ...module,
       headline: dirNameTitleCase,
@@ -40,7 +43,7 @@ async function getData(module: Module): Promise<Module> {
         createdOriginalAssetsDir: false,
         containsOriginalAssetsReadme: contains.originalAssetsReadme,
         createdOriginalAssetsReadme: false,
-      }
+      },
     }
   } catch (error) {
     return module

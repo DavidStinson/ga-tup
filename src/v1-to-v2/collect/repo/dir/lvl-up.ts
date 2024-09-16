@@ -4,8 +4,10 @@ import path from "node:path"
 // local
 import { getDirs } from "../helpers.js"
 import { getLvlUpFilePaths } from "../file/lvl-up.js"
-import { 
-  makeTitleCase, checkForTemplateAssetItems, getFilesThatExist
+import {
+  makeTitleCase,
+  checkForTemplateAssetItems,
+  getFilesThatExist,
 } from "../helpers.js"
 
 // types
@@ -20,58 +22,62 @@ async function getData(iD: Data): Promise<Dirs> {
 
   const lvlUpFilePaths = await getLvlUpFilePaths(iD)
 
-  const validLvlUpMlFilePaths = lvlUpFilePaths.filter((filepath) => (
-    path.extname(filepath) === ".md"
-  ))
+  const validLvlUpMlFilePaths = lvlUpFilePaths.filter(
+    (filepath) => path.extname(filepath) === ".md",
+  )
 
-  // We only need to check to see if we can make microlesson dirs for Level 
+  // We only need to check to see if we can make microlesson dirs for Level
   // Up microlessons if the level-up dir holds more than just a README.md
   // file.
   if (checkNeedToMakeLvlUpMlDirs(iD, validLvlUpMlFilePaths)) {
     iD.dirs.lvlUpMls = await getLvlUpMlDirData(iD.files.lvlUpMls)
   }
-  
+
   return iD.dirs
 }
 
 function checkNeedToMakeLvlUpMlDirs(
-  iD: Data, lvlUpFilesPaths: string[]
+  iD: Data,
+  lvlUpFilesPaths: string[],
 ): boolean {
   const lvlUpDirOnlyHoldsReadmeFile =
     lvlUpFilesPaths.length <= 1 && lvlUpFilesPaths.includes("README")
   const isLecture = iD.module.meta.type === "lecture"
 
-  return (!lvlUpDirOnlyHoldsReadmeFile && isLecture)
+  return !lvlUpDirOnlyHoldsReadmeFile && isLecture
 }
 
 async function getLvlUpMlDirData(files: MlFile[]): Promise<LvlUpMlDir[]> {
   const foundDirs = await getDirs()
 
-  return await Promise.all(files.map(async (ml) => {
-    const dir = path.parse(ml.curPath).name
+  return await Promise.all(
+    files.map(async (ml) => {
+      const dir = path.parse(ml.curPath).name
 
-    // If isFound is true, there is already a dir with the name of a level up
-    // microlesson in the repo so we'd have a conflict if we tried to create
-    // a new dir for that microlesson.
-    const isFound = foundDirs.includes(dir)
+      // If isFound is true, there is already a dir with the name of a level up
+      // microlesson in the repo so we'd have a conflict if we tried to create
+      // a new dir for that microlesson.
+      const isFound = foundDirs.includes(dir)
 
-    const contains = await checkForTemplateAssetItems(dir)
-    const containsReadme = (await getFilesThatExist([`./${dir}/README.md`]))
-        .includes(`./${dir}/README.md`)
-    
-    return new LvlUpMlDir({
-      dirName: dir,
-      displayName: makeTitleCase(dir),
-      curPath: "",
-      desiredPath: `./${dir}`,
-      shouldCreate: true,
-      canCreate: !isFound,
-      containsReadme: containsReadme,
-      containsAssets: contains.assets,
-      containsOriginalAssets: contains.originalAssets,
-      containsOriginalAssetsReadme: contains.originalAssetsReadme,
-    })
-  }))
+      const contains = await checkForTemplateAssetItems(dir)
+      const containsReadme = (
+        await getFilesThatExist([`./${dir}/README.md`])
+      ).includes(`./${dir}/README.md`)
+
+      return new LvlUpMlDir({
+        dirName: dir,
+        displayName: makeTitleCase(dir),
+        curPath: "",
+        desiredPath: `./${dir}`,
+        shouldCreate: true,
+        canCreate: !isFound,
+        containsReadme: containsReadme,
+        containsAssets: contains.assets,
+        containsOriginalAssets: contains.originalAssets,
+        containsOriginalAssetsReadme: contains.originalAssetsReadme,
+      })
+    }),
+  )
 }
 
 export { getData, checkNeedToMakeLvlUpMlDirs, getLvlUpMlDirData }

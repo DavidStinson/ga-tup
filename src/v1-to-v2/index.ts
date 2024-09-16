@@ -1,10 +1,11 @@
-
 // workers
 import { preflightPrompt, repoAndEnvPrompt } from "./prompt/index.js"
 import { collectRepo, collectEnv, collectRemote } from "./collect/index.js"
 import { processEnv, processRepo, processResults } from "./process/index.js"
-import { 
-  renderPreflight, renderRepoAndEnv, renderResults
+import {
+  renderPreflight,
+  renderRepoAndEnv,
+  renderResults,
 } from "./render/index.js"
 import { buildLocal, buildToDisk } from "./build/index.js"
 
@@ -45,6 +46,7 @@ const module: Module = {
     isMigratingLvlUp: false,
     createdConfigJson: false,
     containsFallbackClp: false,
+    createdFallbackClp: false,
     containsAssetsDir: false,
     createdAssetsDir: false,
     containsOriginalAssetsDir: false,
@@ -58,7 +60,8 @@ const assets: Assets = {
   rootAssets: [],
   mlAssets: [],
   miscAssets: [],
-  undeletedAssets: [],
+  deletedAssets: [],
+  assetsNotDeleted: [],
 }
 
 const dirs: Dirs = {
@@ -83,10 +86,10 @@ const files: Files = {
   pklConfig: new PklFile(templateFile.pklConfig),
   pklMicrolessons: new PklFile(templateFile.pklMicrolessons),
   originalAssetsReadmeTemplate: new PureTemplateFile(
-    pureTemplateFile.originalAssets
+    pureTemplateFile.originalAssets,
   ),
   fallbackCanvasLandingPageTemplate: new PureTemplateFile(
-    pureTemplateFile.fallbackClp
+    pureTemplateFile.fallbackClp,
   ),
   clps: [],
   mls: [],
@@ -134,6 +137,7 @@ const initialData: Data = {
   cliOptions,
 }
 
+// do the thing
 async function v1ToV2(cliOptions: CliOptions) {
   initialData.cliOptions = cliOptions
   await renderPreflight(initialData)
@@ -147,7 +151,8 @@ async function v1ToV2(cliOptions: CliOptions) {
   const collectedRemoteData = await collectRemote(repoAndEnvData)
   const builtData = await buildLocal(collectedRemoteData)
   const finalData = await buildToDisk(builtData)
-  const resultsData = await processResults(finalData)
+  const resultsData = processResults(finalData)
+  await renderResults(resultsData)
 }
 
 export { v1ToV2 }

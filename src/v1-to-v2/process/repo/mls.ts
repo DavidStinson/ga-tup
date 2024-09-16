@@ -1,9 +1,10 @@
 // types
 import { Data, Msgs, MlFile, MlDir, LvlUpMlDir } from "../../types.js"
 
-// helpers
+// local
 import { processFileWithHeading } from "./helpers.js"
 
+// do the thing
 function process(iD: Data): Msgs {
   const { verbose } = iD.cliOptions
   iD.repoMsgs = processMls(iD.repoMsgs, iD.files.mls, verbose)
@@ -53,7 +54,7 @@ function processMlFile(msgs: Msgs, ml: MlFile): Msgs {
   } else {
     msgs.failures.push(notFoundMsg)
   }
-  
+
   return msgs
 }
 
@@ -68,7 +69,7 @@ function processMlDirForAssets(msgs: Msgs, dir: MlDir | LvlUpMlDir): Msgs {
   // Eject out of this if we don't have a README.md file, we can't be sure of
   // what this directory actually is.
   if (!dir.containsReadme) return msgs
-  
+
   const containsAll = `The ${dir.curPath} microlesson directory contains all the necessary asset template items.`
   const doesNotContainAssets = `The ${dir.curPath} microlesson directory does not contain an assets directory. 
    One will be created, along with the necessary sub-items.`
@@ -90,7 +91,7 @@ function processMlDirForAssets(msgs: Msgs, dir: MlDir | LvlUpMlDir): Msgs {
   } else {
     msgs.successes.push(doesNotContainAssets)
   }
-  
+
   return msgs
 }
 
@@ -144,9 +145,11 @@ function processLvlUpMlFile(msgs: Msgs, ml: MlFile): Msgs {
 }
 
 function processLevelUpMlDirs(
-  msgs: Msgs, dirs: LvlUpMlDir[], verbose: boolean
+  msgs: Msgs,
+  dirs: LvlUpMlDir[],
+  verbose: boolean,
 ): Msgs {
-  const existingDirs = dirs.filter(dir => dir.shouldCreate && !dir.canCreate)
+  const existingDirs = dirs.filter((dir) => dir.shouldCreate && !dir.canCreate)
   const noOverlapMsg = `No Level Up microlessons have overlapping names with existing directories.`
   const oneExistingMsg = `1 Level Up microlesson has an overlapping name with an existing directory in the root of the module.
     That Level Up microlesson will need to be manually migrated.`
@@ -169,7 +172,9 @@ function processLevelUpMlDirs(
 }
 
 function processLevelUpDirForOverlap(
-  msgs: Msgs, dir: LvlUpMlDir, verbose: boolean
+  msgs: Msgs,
+  dir: LvlUpMlDir,
+  verbose: boolean,
 ): Msgs {
   const foundOverlapMsg = `The ${dir.desiredPath} directory name matches the name of an existing directory in the root of the module.`
   const notFoundCreateMsg = `The ${dir.desiredPath} directory can be created for the ${dir.displayName} Level Up microlesson.`

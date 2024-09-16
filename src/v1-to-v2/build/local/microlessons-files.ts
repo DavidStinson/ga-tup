@@ -1,8 +1,5 @@
 // local
-import {
-  buildSubHeading,
-  removeHero,
-} from "./helpers.js"
+import { buildSubHeading, removeHero } from "./helpers.js"
 
 // types
 import { Module, MlFile } from "../../types.js"
@@ -17,7 +14,7 @@ function build(mls: MlFile[], module: Module): MlFile[] {
 function migrateExistingPages(files: MlFile[], module: Module): MlFile[] {
   files.forEach((file, idx) => {
     // Don't take any action if there is no README.md file for a microlesson.
-    if (file.type === "MlFile" && file.isFound) return
+    if (file.type === "MlFile" && !file.isFound) return
 
     files[idx] = migrateExistingPage(file, module)
   })
@@ -34,6 +31,7 @@ function migrateExistingPage(file: MlFile, module: Module): MlFile {
   } else {
     file.newFileContent = headline + file.curFileContent
   }
+
   return file
 }
 

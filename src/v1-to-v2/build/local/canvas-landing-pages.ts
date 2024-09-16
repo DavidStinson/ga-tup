@@ -15,7 +15,7 @@ function build(iD: Data): ClpFile[] {
   const migratedPages = migrateExistingPages(files.clps, module)
 
   if (
-    !module.meta.containsFallbackClp && 
+    !module.meta.containsFallbackClp &&
     files.fallbackCanvasLandingPageTemplate.templateFileFetched
   ) {
     migratedPages.push(buildFallbackClp(files, module))
@@ -46,7 +46,8 @@ function migrateExistingPage(file: ClpFile, module: Module): ClpFile {
 
 function buildFallbackClp(files: Files, module: Module): ClpFile {
   const fallbackClpWithHeadline = updatePrefixAndHeadline(
-    files.fallbackCanvasLandingPageTemplate.templateFile, module
+    files.fallbackCanvasLandingPageTemplate.templateFile,
+    module,
   )
 
   const fallbackClp = new ClpFile({

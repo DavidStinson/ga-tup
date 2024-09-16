@@ -1,5 +1,7 @@
+// npm
 import { z } from "zod"
 
+// types
 const cliOptionsSchema = z.object({
   verbose: z.boolean(),
 })

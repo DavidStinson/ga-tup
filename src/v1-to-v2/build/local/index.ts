@@ -7,7 +7,8 @@ import { build as buildPklFiles } from "./pkl-files.js"
 // types
 import { Data } from "../../types.js"
 
-async function build(iD: Data) {  
+// do the thing
+async function build(iD: Data) {
   iD.files = buildTemplateFiles(iD)
   iD.files.clps = buildCanvasLandingPages(iD)
   iD.files.mls = buildMicrolessonFiles(iD.files.mls, iD.module)

@@ -6,23 +6,23 @@ import path from "node:path"
 import { getFilePathsOfDirChildren, makeTitleCase } from "../helpers.js"
 
 // types
-import { Data, Files, ClpFile,  } from "../../../types.js"
+import { Data, Files, ClpFile } from "../../../types.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Files> {
-  const clpWillExist = 
-    iD.dirs.clps.isFound || 
+  const clpWillExist =
+    iD.dirs.clps.isFound ||
     (iD.dirs.clps.canCreate && iD.dirs.clps.shouldCreate)
-  
+
   if (!clpWillExist) return iD.files
 
   const canvasLandingPagesPaths = await getFilePathsOfDirChildren(
-    "./canvas-landing-pages"
+    "./canvas-landing-pages",
   )
   const canvasLandingPageNames = canvasLandingPagesPaths.map(
-    (clpPath) => path.parse(clpPath).name
+    (clpPath) => path.parse(clpPath).name,
   )
-  
+
   iD.files.clps = await getClpFilesData(
     canvasLandingPageNames,
     canvasLandingPagesPaths,
@@ -32,19 +32,20 @@ async function getData(iD: Data): Promise<Files> {
 }
 
 async function getClpFilesData(
-  itemNames: string[], filepaths: string[]
+  itemNames: string[],
+  filepaths: string[],
 ): Promise<ClpFile[]> {
   const filesContent = await Promise.allSettled(
     filepaths.map(async (filepath) => {
       return await readFile(filepath, "utf-8")
-    })
+    }),
   )
 
   return filepaths.map((filepath, idx) => {
-    const fileContent = filesContent[idx]
+    const fileContent = filesContent[idx]!
     const foundWithoutError = fileContent.status === "fulfilled"
 
-    const titleCaseName = makeTitleCase(itemNames[idx])
+    const titleCaseName = makeTitleCase(itemNames[idx]!)
 
     return new ClpFile({
       fileName: path.parse(filepath).name,

@@ -24,14 +24,14 @@ async function getData(iD: Data): Promise<Files> {
 
   allMlsWithLineNums.forEach((mlWithLineNum, index) => {
     const correctedIdx = index + 1
-    if(mlWithLineNum.isLvlUp) {
-      const idx = iD.files.lvlUpMls.findIndex((ml) => (
-        ml.id === mlWithLineNum.id
-      ))
-      iD.files.lvlUpMls[idx].deliveryOrder = correctedIdx
+    if (mlWithLineNum.isLvlUp) {
+      const idx = iD.files.lvlUpMls.findIndex(
+        (ml) => ml.id === mlWithLineNum.id,
+      )
+      iD.files.lvlUpMls[idx]!.deliveryOrder = correctedIdx
     } else {
       const idx = iD.files.mls.findIndex((ml) => ml.id === mlWithLineNum.id)
-      iD.files.mls[idx].deliveryOrder = correctedIdx
+      iD.files.mls[idx]!.deliveryOrder = correctedIdx
     }
   })
 
@@ -40,7 +40,7 @@ async function getData(iD: Data): Promise<Files> {
 
 function getMlData(ml: MlFile, splitRootReadme: string[]) {
   const mlReadmeLine = splitRootReadme.findIndex((line) =>
-    line.includes(ml.curPath)
+    line.includes(ml.curPath),
   )
   return {
     id: ml.id,

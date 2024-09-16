@@ -1,6 +1,7 @@
 // node
 import { mkdir, writeFile } from "node:fs/promises"
 
+// do the thing
 async function writeDirToDisk(desiredPath: string): Promise<boolean> {
   try {
     await mkdir(desiredPath, { recursive: true })
@@ -10,7 +11,10 @@ async function writeDirToDisk(desiredPath: string): Promise<boolean> {
   }
 }
 
-async function writeFileToDisk(desiredPath: string, content: string): Promise<boolean> {
+async function writeFileToDisk(
+  desiredPath: string,
+  content: string,
+): Promise<boolean> {
   try {
     await writeFile(desiredPath, content)
     return true

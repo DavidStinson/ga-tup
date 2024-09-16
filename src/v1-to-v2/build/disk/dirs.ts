@@ -1,6 +1,12 @@
 // types
-import { 
-  Data, Dirs, TemplateDir, MlDir, LvlUpMlDir, PureTemplateFile, Meta
+import {
+  Data,
+  Dirs,
+  TemplateDir,
+  MlDir,
+  LvlUpMlDir,
+  PureTemplateFile,
+  Meta,
 } from "../../types.js"
 
 // local
@@ -17,14 +23,18 @@ async function build(iD: Data): Promise<Dirs> {
   iD.dirs.videoGuide = await buildTemplateDir(iD.dirs.videoGuide)
 
   iD.dirs.mls = await buildMlDirs(
-    iD.dirs.mls, iD.files.originalAssetsReadmeTemplate
+    iD.dirs.mls,
+    iD.files.originalAssetsReadmeTemplate,
   )
   iD.dirs.lvlUpMls = await buildLvlUpMlDirs(
-    iD.dirs.lvlUpMls, iD.files.originalAssetsReadmeTemplate
+    iD.dirs.lvlUpMls,
+    iD.files.originalAssetsReadmeTemplate,
   )
 
   iD.module.meta = await buildAssetTemplateDirs(
-    iD.module.meta, ".", iD.files.originalAssetsReadmeTemplate
+    iD.module.meta,
+    ".",
+    iD.files.originalAssetsReadmeTemplate,
   )
 
   return iD.dirs
@@ -38,7 +48,8 @@ async function buildTemplateDir(dir: TemplateDir): Promise<TemplateDir> {
 }
 
 async function buildMlDirs(
-  dirs: MlDir[], originalAssetsReadmeTemplate: PureTemplateFile
+  dirs: MlDir[],
+  originalAssetsReadmeTemplate: PureTemplateFile,
 ): Promise<MlDir[]> {
   dirs.forEach(async (dir, idx) => {
     // Eject out of this if we don't have a README.md file, we can't be sure of
@@ -46,7 +57,9 @@ async function buildMlDirs(
     if (!dir.containsReadme) return
 
     dirs[idx] = await buildAssetTemplateDirs(
-      dir, dir.curPath, originalAssetsReadmeTemplate
+      dir,
+      dir.curPath,
+      originalAssetsReadmeTemplate,
     )
   })
 
@@ -54,27 +67,30 @@ async function buildMlDirs(
 }
 
 async function buildAssetTemplateDirs<T extends MlDir | LvlUpMlDir | Meta>(
-  item: T, dirPath: string, originalAssetsReadmeTemplate: PureTemplateFile
+  item: T,
+  dirPath: string,
+  originalAssetsReadmeTemplate: PureTemplateFile,
 ): Promise<T> {
   if (!item.containsAssetsDir) {
     item.createdAssetsDir = await writeDirToDisk(`${dirPath}/assets`)
   }
   if (!item.containsOriginalAssetsDir) {
     item.createdOriginalAssetsDir = await writeDirToDisk(
-      `${dirPath}/assets/originals`
+      `${dirPath}/assets/originals`,
     )
   }
   if (!item.containsOriginalAssetsReadme) {
     item.createdOriginalAssetsReadme = await writeFileToDisk(
       `${dirPath}/assets/originals/README.md`,
-      originalAssetsReadmeTemplate.templateFile
+      originalAssetsReadmeTemplate.templateFile,
     )
   }
   return item
 }
 
 async function buildLvlUpMlDirs(
-  dirs: LvlUpMlDir[], originalAssetsReadmeTemplate: PureTemplateFile
+  dirs: LvlUpMlDir[],
+  originalAssetsReadmeTemplate: PureTemplateFile,
 ): Promise<LvlUpMlDir[]> {
   dirs.forEach(async (dir, idx) => {
     // Eject out of this if we can't create the directory.
@@ -87,13 +103,16 @@ async function buildLvlUpMlDirs(
 }
 
 async function buildLvlUpMlDir(
-  dir: LvlUpMlDir, originalAssetsReadmeTemplate: PureTemplateFile
+  dir: LvlUpMlDir,
+  originalAssetsReadmeTemplate: PureTemplateFile,
 ): Promise<LvlUpMlDir> {
   dir.didCreate = await writeDirToDisk(dir.desiredPath)
 
   if (dir.didCreate) {
     dir = await buildAssetTemplateDirs(
-      dir, dir.desiredPath, originalAssetsReadmeTemplate
+      dir,
+      dir.desiredPath,
+      originalAssetsReadmeTemplate,
     )
   }
   return dir

@@ -2,18 +2,21 @@
 import { v4 as uuidv4 } from "uuid"
 
 // config types
-import { 
-  DirData, TemplateDirData, MlDirData, LvlUpMlDirData
+import {
+  DirData,
+  TemplateDirData,
+  MlDirData,
+  LvlUpMlDirData,
 } from "../config.js"
 
 // models (class types)
 interface Dir {
-  id: string;
-  majorType: "Directory";
-  type: "Dir" | "TemplateDir" | "MlDir" | "LvlUpMlDir";
-  curPath: string;
-  dirName: string;
-  displayName: string;
+  id: string
+  majorType: "Directory"
+  type: "Dir" | "TemplateDir" | "MlDir" | "LvlUpMlDir"
+  curPath: string
+  dirName: string
+  displayName: string
 }
 
 class Dir implements Dir {
@@ -28,19 +31,19 @@ class Dir implements Dir {
 }
 
 interface TemplateDir extends Dir {
-  type: "TemplateDir";
-  desiredPath: string;
-  foundIn: string[];
-  isFound: boolean;
-  shouldRemove: boolean;
-  shouldCreate: boolean;
-  canCreate: boolean;
-  didCreate: boolean;
+  type: "TemplateDir"
+  desiredPath: string
+  foundIn: string[]
+  isFound: boolean
+  shouldRemove: boolean
+  shouldCreate: boolean
+  canCreate: boolean
+  didCreate: boolean
 }
 
 class TemplateDir extends Dir implements TemplateDir {
   constructor(dir: TemplateDirData) {
-    super({dirName: dir.dirName, displayName: dir.displayName})
+    super({ dirName: dir.dirName, displayName: dir.displayName })
     this.type = "TemplateDir"
     this.desiredPath = dir.desiredPath
     this.foundIn = dir.foundIn
@@ -53,19 +56,19 @@ class TemplateDir extends Dir implements TemplateDir {
 }
 
 interface MlDir extends Dir {
-  type: "MlDir" | "LvlUpMlDir";
-  containsReadme: boolean;
-  containsAssetsDir: boolean;
-  createdAssetsDir: boolean;
-  containsOriginalAssetsDir: boolean;
-  createdOriginalAssetsDir: boolean;
-  containsOriginalAssetsReadme: boolean;
-  createdOriginalAssetsReadme: boolean;
+  type: "MlDir" | "LvlUpMlDir"
+  containsReadme: boolean
+  containsAssetsDir: boolean
+  createdAssetsDir: boolean
+  containsOriginalAssetsDir: boolean
+  createdOriginalAssetsDir: boolean
+  containsOriginalAssetsReadme: boolean
+  createdOriginalAssetsReadme: boolean
 }
 
 class MlDir extends Dir implements MlDir {
   constructor(dir: MlDirData) {
-    super({dirName: dir.dirName, displayName: dir.displayName})
+    super({ dirName: dir.dirName, displayName: dir.displayName })
     this.type = "MlDir"
     this.curPath = dir.curPath
     this.containsReadme = dir.containsReadme
@@ -79,11 +82,11 @@ class MlDir extends Dir implements MlDir {
 }
 
 interface LvlUpMlDir extends MlDir {
-  type: "LvlUpMlDir";
-  desiredPath: string;
-  shouldCreate: boolean;
-  canCreate: boolean;
-  didCreate: boolean;
+  type: "LvlUpMlDir"
+  desiredPath: string
+  shouldCreate: boolean
+  canCreate: boolean
+  didCreate: boolean
 }
 
 class LvlUpMlDir extends MlDir implements LvlUpMlDir {

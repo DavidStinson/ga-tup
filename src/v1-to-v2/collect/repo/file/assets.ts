@@ -16,13 +16,13 @@ async function getData(iD: Data): Promise<Assets> {
 
   if (iD.dirs.internalResources.isFound) {
     iD.assets.miscAssets.push(
-      ...(await getFilesThatExist(config.path.internalResourcesAssets))
+      ...(await getFilesThatExist(config.path.internalResourcesAssets)),
     )
   }
 
   if (iD.dirs.references.isFound) {
     iD.assets.miscAssets.push(
-      ...(await getFilesThatExist(config.path.referencesAssets))
+      ...(await getFilesThatExist(config.path.referencesAssets)),
     )
   }
 
@@ -41,4 +41,3 @@ function getMicrolessonAssetPaths(mls: MlDir[]): string[] {
 }
 
 export { getData }
-

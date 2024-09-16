@@ -1,6 +1,9 @@
 // local
-import { 
-  getDirs, makeTitleCase, checkForTemplateAssetItems, getFilesThatExist
+import {
+  getDirs,
+  makeTitleCase,
+  checkForTemplateAssetItems,
+  getFilesThatExist,
 } from "../helpers.js"
 
 // types
@@ -14,33 +17,36 @@ async function getData(dirs: Dirs, module: Module): Promise<Dirs> {
   const foundDirs = await getDirs()
   const microlessonDirs = filterTemplateDirs(foundDirs, module)
 
-  dirs.mls = await Promise.all(microlessonDirs.map(async (dir) => {
-    try {
-      const contains = await checkForTemplateAssetItems(dir)
-      const containsReadme = (await getFilesThatExist([`./${dir}/README.md`]))
-        .includes(`./${dir}/README.md`)
+  dirs.mls = await Promise.all(
+    microlessonDirs.map(async (dir) => {
+      try {
+        const contains = await checkForTemplateAssetItems(dir)
+        const containsReadme = (
+          await getFilesThatExist([`./${dir}/README.md`])
+        ).includes(`./${dir}/README.md`)
 
-      return new MlDir({
-        dirName: dir,
-        displayName: makeTitleCase(dir),
-        curPath: `./${dir}`,
-        containsReadme: containsReadme,
-        containsAssets: contains.assets,
-        containsOriginalAssets: contains.originalAssets,
-        containsOriginalAssetsReadme: contains.originalAssetsReadme,
-      })
-    } catch (error) {
-      return new MlDir({
-        dirName: dir,
-        displayName: makeTitleCase(dir),
-        curPath: `./${dir}`,
-        containsReadme: false,
-        containsAssets: false,
-        containsOriginalAssets: false,
-        containsOriginalAssetsReadme: false,
-      })
-    }
-  }))
+        return new MlDir({
+          dirName: dir,
+          displayName: makeTitleCase(dir),
+          curPath: `./${dir}`,
+          containsReadme: containsReadme,
+          containsAssets: contains.assets,
+          containsOriginalAssets: contains.originalAssets,
+          containsOriginalAssetsReadme: contains.originalAssetsReadme,
+        })
+      } catch (error) {
+        return new MlDir({
+          dirName: dir,
+          displayName: makeTitleCase(dir),
+          curPath: `./${dir}`,
+          containsReadme: false,
+          containsAssets: false,
+          containsOriginalAssets: false,
+          containsOriginalAssetsReadme: false,
+        })
+      }
+    }),
+  )
 
   return dirs
 }

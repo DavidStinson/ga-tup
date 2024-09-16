@@ -10,11 +10,12 @@ import { Files, Module, PklFile, MlFile } from "../../types.js"
 // config
 import { config } from "../../config.js"
 
+// do the thing
 function build(files: Files, module: Module): Files {
-  const validMls = files.mls.filter(ml => ml.isFound)
-  const movingLvlUpMls = files.lvlUpMls.filter(ml => (
-    ml.shouldMove && ml.canMoveOrCreate
-  ))
+  const validMls = files.mls.filter((ml) => ml.isFound)
+  const movingLvlUpMls = files.lvlUpMls.filter(
+    (ml) => ml.shouldMove && ml.canMoveOrCreate,
+  )
   const allMlsToWrite = [...validMls, ...movingLvlUpMls]
 
   allMlsToWrite.sort((a, b) => a.deliveryOrder - b.deliveryOrder)
@@ -25,29 +26,34 @@ function build(files: Files, module: Module): Files {
 }
 
 function buildPklConfig(
-  files: Files, mlsToWrite: MlFile[], module: Module
+  files: Files,
+  mlsToWrite: MlFile[],
+  module: Module,
 ): PklFile {
   const mls = mlsToWrite.map((ml, idx, arr) => {
     const isLast = idx === arr.length - 1
     return `      mls.${ml.camelCaseName}${!isLast ? os.EOL : ""}`
   })
 
+  const type =
+    titleCase(module.meta.type) === "Lecture"
+      ? "Lesson"
+      : titleCase(module.meta.type)
+
   const amends = `amends "${config.vars.pklTemplateUrl}"${os.EOL}`
 
-  const repo = 
-`repo {
+  const repo = `repo {
   // This name is shown in the header nav to navigate users home
-  friendlyName = "${module.prefix 
-    ? `${module.prefix} - ${module.headline}` 
-    : module.headline}"
+  friendlyName = "${
+    module.prefix ? `${module.prefix} - ${module.headline}` : module.headline
+  }"
   // This must match the repo name as it appears on GitHub exactly
   name = "${module.dirName}"
-  type = "${titleCase(module.meta.type)}"
+  type = "${type}"
 }
 `
 
-  const courses =
-`courses {
+  const courses = `courses {
   new {
     name = "fallback"
     microlessons {
@@ -58,8 +64,7 @@ ${mls.join("")}
 }
 `
 
-  files.pklConfig.newFileContent = 
-`${amends}
+  files.pklConfig.newFileContent = `${amends}
 ${files.pklConfig.templateFile}
 ${repo}
 ${courses}
@@ -69,21 +74,21 @@ ${courses}
 }
 
 function buildPklMicrolessons(files: Files, mlsToWrite: MlFile[]): PklFile {
-  const mls = mlsToWrite.map(ml => (
-`${ml.camelCaseName} = new Template.Microlesson {
+  const mls = mlsToWrite.map(
+    (ml) =>
+      `${ml.camelCaseName} = new Template.Microlesson {
   friendlyName = "${ml.titleCaseName}"
   dirName = "${ml.kebabName}"
   type = "Content"
   videoUrl = ""
 }
 
-`))
+`,
+  )
 
-  const importTemplate =
-`import "${config.vars.pklTemplateUrl}" as Template`
+  const importTemplate = `import "${config.vars.pklTemplateUrl}" as Template`
 
-  files.pklMicrolessons.newFileContent =
-`${importTemplate}
+  files.pklMicrolessons.newFileContent = `${importTemplate}
 ${files.pklMicrolessons.templateFile}
 ${mls.join("")}`
 

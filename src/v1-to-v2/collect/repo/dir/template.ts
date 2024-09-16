@@ -21,7 +21,7 @@ async function getData(iD: Data): Promise<Dirs> {
 
 async function getTemplateData(
   module: Module,
-  dir: TemplateDir
+  dir: TemplateDir,
 ): Promise<TemplateDir> {
   try {
     await stat(dir.desiredPath)

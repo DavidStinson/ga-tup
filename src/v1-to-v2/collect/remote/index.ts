@@ -33,7 +33,7 @@ async function collect(iD: Data): Promise<Data> {
   })
   dataSpinner.start()
 
-  // This is only here to keep TS happy, we can't get to this point if typeUrl 
+  // This is only here to keep TS happy, we can't get to this point if typeUrl
   // is "". typeUrl must be assigned by a user in the preflight check.
   if (!iD.module.meta.typeUrl) return iD
   const urlType = iD.module.meta.typeUrl
@@ -49,11 +49,11 @@ async function collect(iD: Data): Promise<Data> {
   iD.files.pklMicrolessons = await getFileData(files.pklMicrolessons, urlType)
   iD.files.originalAssetsReadmeTemplate = await getPureFileData(
     files.originalAssetsReadmeTemplate,
-    urlType
+    urlType,
   )
   iD.files.fallbackCanvasLandingPageTemplate = await getPureFileData(
     files.fallbackCanvasLandingPageTemplate,
-    urlType
+    urlType,
   )
 
   const templatesNotFetched = getTemplatesThatWereNotFetched(iD.files)
@@ -63,16 +63,20 @@ async function collect(iD: Data): Promise<Data> {
   } else if (dataSpinner.isSpinning && templatesNotFetched.length) {
     dataSpinner.fail("Failed to retrieve some template files.")
     templatesNotFetched.forEach((template) => {
-      console.log(`The ${template.displayName} template file could not be fetched.`)
+      console.log(
+        `The ${template.displayName} template file could not be fetched.`,
+      )
     })
-    await promptContinue("Do you want to continue without these templates? Some functionality will be limited.")
+    await promptContinue(
+      "Do you want to continue without these templates? Some functionality will be limited.",
+    )
   }
 
   return iD
 }
 
 function getTemplatesThatWereNotFetched(
-  files: Files
+  files: Files,
 ): (TemplateFile | PureTemplateFile)[] {
   const templates = [
     files.defaultLayout,
@@ -83,7 +87,7 @@ function getTemplatesThatWereNotFetched(
     files.references,
     files.pklConfig,
     files.pklMicrolessons,
-    files.originalAssetsReadmeTemplate
+    files.originalAssetsReadmeTemplate,
   ]
 
   return templates.filter((template) => !template.templateFileFetched)

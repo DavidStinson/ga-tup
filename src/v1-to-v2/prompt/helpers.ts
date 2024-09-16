@@ -7,6 +7,7 @@ import { confirm } from "@inquirer/prompts"
 // types
 import { MlFile } from "../types.js"
 
+// do the thing
 async function promptContinue(msg: string) {
   try {
     if (!(await confirm({ message: msg }))) process.exit(0)

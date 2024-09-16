@@ -1,6 +1,7 @@
 // types
 import { Data, Msgs } from "../../types.js"
 
+// do the thing
 function process(iD: Data): Msgs {
   const totalAssets =
     iD.assets.rootAssets.length +

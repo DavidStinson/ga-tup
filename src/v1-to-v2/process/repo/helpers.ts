@@ -1,11 +1,17 @@
 // types
-import { 
-  Msgs, TemplateDir, TemplateFile, ClpFile, MlFile, TemplateFileWithHeading
+import {
+  Msgs,
+  TemplateDir,
+  TemplateFile,
+  ClpFile,
+  MlFile,
+  TemplateFileWithHeading,
 } from "../../types.js"
 
 // do the thing
 function processGoodItem(
-  msgs: Msgs, item: TemplateDir | TemplateFile | ClpFile
+  msgs: Msgs,
+  item: TemplateDir | TemplateFile | ClpFile,
 ): Msgs {
   const foundMsg = `The ${item.curPath} ${item.majorType.toLowerCase()} was found.`
   const fileNotFoundMsg = `The ${item.desiredPath} file was not found. 
@@ -15,24 +21,31 @@ function processGoodItem(
   const dirNotFoundMsg = `The ${item.desiredPath} directory was not found. It will be created.`
   const dirNotFoundCannotCreateMsg = `The ${item.desiredPath} directory was not found and cannot be created automatically.
     It will need to be manually created with the necessary content.`
-  
 
   if (item.isFound) {
     msgs.successes.push(foundMsg)
   } else if (
-    item.majorType === "File" && item.shouldCreate && item.canMoveOrCreate
+    item.majorType === "File" &&
+    item.shouldCreate &&
+    item.canMoveOrCreate
   ) {
     msgs.successes.push(fileNotFoundMsg)
   } else if (
-    item.majorType === "File" && item.shouldCreate && !item.canMoveOrCreate
+    item.majorType === "File" &&
+    item.shouldCreate &&
+    !item.canMoveOrCreate
   ) {
     msgs.failures.push(fileNotFoundCannotCreateMsg)
   } else if (
-    item.majorType === "Directory" && item.shouldCreate && item.canCreate
+    item.majorType === "Directory" &&
+    item.shouldCreate &&
+    item.canCreate
   ) {
     msgs.successes.push(dirNotFoundMsg)
   } else if (
-    item.majorType === "Directory" && item.shouldCreate && !item.canCreate
+    item.majorType === "Directory" &&
+    item.shouldCreate &&
+    !item.canCreate
   ) {
     msgs.failures.push(dirNotFoundCannotCreateMsg)
   }
@@ -54,7 +67,9 @@ function processBadItem(msgs: Msgs, item: TemplateDir | TemplateFile): Msgs {
 }
 
 function processFileWithHeading(
-  msgs: Msgs, file: TemplateFileWithHeading | ClpFile | MlFile, verbose: boolean
+  msgs: Msgs,
+  file: TemplateFileWithHeading | ClpFile | MlFile,
+  verbose: boolean,
 ): Msgs {
   const canUpdateMsg = `The ${file.curPath} file's h1 heading can be updated.`
   const cannotUpdateMsg = `The ${file.curPath} file's h1 heading cannot be updated automatically.
@@ -68,8 +83,4 @@ function processFileWithHeading(
   return msgs
 }
 
-export {
-  processGoodItem,
-  processBadItem,
-  processFileWithHeading,
-}
+export { processGoodItem, processBadItem, processFileWithHeading }

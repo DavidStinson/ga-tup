@@ -2,8 +2,10 @@
 import { Data, Msgs, Meta, PklFile } from "../../types.js"
 
 // local
-import { 
-  processGoodItem, processBadItem,processFileWithHeading
+import {
+  processGoodItem,
+  processBadItem,
+  processFileWithHeading,
 } from "./helpers.js"
 
 // do the thing
@@ -16,7 +18,9 @@ function process(iD: Data): Msgs {
   iD.repoMsgs = processGoodItem(iD.repoMsgs, iD.files.rootReadme)
   if (iD.files.rootReadme.isFound) {
     iD.repoMsgs = processFileWithHeading(
-      iD.repoMsgs, iD.files.rootReadme, verbose
+      iD.repoMsgs,
+      iD.files.rootReadme,
+      verbose,
     )
   }
 
@@ -26,18 +30,26 @@ function process(iD: Data): Msgs {
   iD.repoMsgs = processPklFile(iD.repoMsgs, iD.files.pklMicrolessons)
   iD.repoMsgs = processGoodItem(iD.repoMsgs, iD.files.videoHub)
   if (iD.files.videoHub.isFound) {
-    iD.repoMsgs = processFileWithHeading(iD.repoMsgs, iD.files.videoHub, verbose)
+    iD.repoMsgs = processFileWithHeading(
+      iD.repoMsgs,
+      iD.files.videoHub,
+      verbose,
+    )
   }
   iD.repoMsgs = processGoodItem(iD.repoMsgs, iD.files.releaseNotes)
   if (iD.files.releaseNotes.isFound) {
     iD.repoMsgs = processFileWithHeading(
-      iD.repoMsgs, iD.files.releaseNotes, verbose
+      iD.repoMsgs,
+      iD.files.releaseNotes,
+      verbose,
     )
   }
   iD.repoMsgs = processGoodItem(iD.repoMsgs, iD.files.instructorGuide)
   if (iD.files.instructorGuide.isFound) {
     iD.repoMsgs = processFileWithHeading(
-      iD.repoMsgs, iD.files.instructorGuide, verbose
+      iD.repoMsgs,
+      iD.files.instructorGuide,
+      verbose,
     )
   }
   iD.repoMsgs = processBadItem(iD.repoMsgs, iD.dirs.videoGuide)
@@ -47,7 +59,9 @@ function process(iD: Data): Msgs {
     iD.repoMsgs = processGoodItem(iD.repoMsgs, iD.files.references)
     if (iD.files.references.isFound) {
       iD.repoMsgs = processFileWithHeading(
-        iD.repoMsgs, iD.files.references, verbose
+        iD.repoMsgs,
+        iD.files.references,
+        verbose,
       )
     }
 
@@ -59,7 +73,7 @@ function process(iD: Data): Msgs {
   return iD.repoMsgs
 }
 
-function processRootDirForAssets(msgs: Msgs, repo: Meta): Msgs {  
+function processRootDirForAssets(msgs: Msgs, repo: Meta): Msgs {
   const containsAll = `The root directory contains all the necessary asset template items.`
   const doesNotContainAssets = `The root directory does not contain an assets directory. 
    One will be created, along with the necessary sub-items.`
@@ -81,7 +95,7 @@ function processRootDirForAssets(msgs: Msgs, repo: Meta): Msgs {
   } else {
     msgs.successes.push(doesNotContainAssets)
   }
-  
+
   return msgs
 }
 

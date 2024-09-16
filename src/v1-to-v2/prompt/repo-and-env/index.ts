@@ -15,16 +15,16 @@ async function prompt(iD: Data): Promise<Data> {
   iD.module = await modulePrefixCollect(iD.module)
   iD.module = await verifyAndCollectHeadline(iD.module)
   iD.module = await verifyAndCollectGhRepoName(iD.module)
-  
-  iD.files.mls = await verifyAndCollectMlTitles(iD.files.mls, false)
-  iD.module.meta.isMigratingLvlUp = await checkLevelUpMigrating(
-    iD.dirs.lvlUpMls
-  )
-  if (!iD.module.meta.isMigratingLvlUp) {
-    iD.dirs.lvlUpMls = await toggleOffCreate(iD.dirs.lvlUpMls)
-  }
 
-  if (iD.module.meta.type === "lecture") {
+  iD.files.mls = await verifyAndCollectMlTitles(iD.files.mls, false)
+  if (iD.module.meta.type === "lecture" && iD.files.lvlUpMls.length) {
+    iD.module.meta.isMigratingLvlUp = await checkLevelUpMigrating(
+      iD.dirs.lvlUpMls,
+    )
+    if (!iD.module.meta.isMigratingLvlUp) {
+      iD.dirs.lvlUpMls = await toggleOffCreate(iD.dirs.lvlUpMls)
+    }
+
     iD.files.lvlUpMls = await verifyAndCollectMlTitles(iD.files.lvlUpMls, true)
   }
 
@@ -68,7 +68,7 @@ async function modulePrefixCollect(module: Module): Promise<Module> {
 }
 
 async function verifyAndCollectHeadline(module: Module): Promise<Module> {
-  return await verifyHeadline(module) ? module : await collectHeadline(module)
+  return (await verifyHeadline(module)) ? module : await collectHeadline(module)
 }
 
 async function verifyHeadline(module: Module): Promise<boolean> {
@@ -132,8 +132,8 @@ async function collectHeadline(module: Module): Promise<Module> {
 }
 
 async function verifyAndCollectGhRepoName(module: Module): Promise<Module> {
-  module.dirName = await verifyGhRepoName(module) 
-    ? module.dirName 
+  module.dirName = (await verifyGhRepoName(module))
+    ? module.dirName
     : await collectGhRepoName(module)
   return module
 }
@@ -174,17 +174,19 @@ async function collectGhRepoName(module: Module): Promise<string> {
 }
 
 async function verifyAndCollectMlTitles(
-  mls: MlFile[], isLevelUp: boolean = false
+  mls: MlFile[],
+  isLevelUp: boolean = false,
 ): Promise<MlFile[]> {
-  const mlsThatExist = mls.filter(ml => ml.isFound)
-  const verifiedMls = await verifyMlTitles(mlsThatExist, isLevelUp) 
-    ? mlsThatExist 
+  const mlsThatExist = mls.filter((ml) => ml.isFound)
+  const verifiedMls = (await verifyMlTitles(mlsThatExist, isLevelUp))
+    ? mlsThatExist
     : await collectMlTitles(mlsThatExist)
-  return mls.map(ml => verifiedMls.find(vm => vm.id === ml.id) || ml)
+  return mls.map((ml) => verifiedMls.find((vm) => vm.id === ml.id) || ml)
 }
 
 async function verifyMlTitles(
-  mls: MlFile[], isLevelUp: boolean = false
+  mls: MlFile[],
+  isLevelUp: boolean = false,
 ): Promise<boolean> {
   if (!mls.length) return true
   const mlNames = getMlNamesForConsole(mls)
@@ -198,12 +200,13 @@ async function verifyMlTitles(
   Verify that these are the exact names you wish to use. Take note of:
    - Capitalization (particularly method names or proper nouns)
    - Punctuation (including dashes)
-  ${!isLevelUp 
-    ?`
+  ${
+    !isLevelUp
+      ? `
   If you think a microlesson is missing, ensure that the microlesson's directory
   contains a README.md file.
 `
-    : ``
+      : ``
   }
   Are these names all correct?`
 
@@ -238,9 +241,7 @@ async function collectMlTitles(mls: MlFile[]): Promise<MlFile[]> {
 
       if (typeof editingMl === "boolean") break
 
-      const selectedMlIdx = mls.findIndex(
-        (ml) => ml.id === editingMl.id
-      )
+      const selectedMlIdx = mls.findIndex((ml) => ml.id === editingMl.id)
 
       const userInput = await input({
         message: "What is the correct name?",
@@ -248,9 +249,9 @@ async function collectMlTitles(mls: MlFile[]): Promise<MlFile[]> {
         required: true,
       })
 
-      mls[selectedMlIdx].displayName = userInput.trim()
+      mls[selectedMlIdx]!.displayName = userInput.trim()
 
-      mls[selectedMlIdx].titleCaseName = mls[selectedMlIdx].displayName
+      mls[selectedMlIdx]!.titleCaseName = mls[selectedMlIdx]!.displayName
     }
 
     return mls
@@ -265,8 +266,8 @@ async function collectMlTitles(mls: MlFile[]): Promise<MlFile[]> {
 async function checkLevelUpMigrating(mls: LvlUpMlDir[]): Promise<boolean> {
   if (!mls.length) return false
 
-  const existingDirs = mls.filter(dir => !dir.canCreate)
-  if (mls.length === existingDirs.length) return false 
+  const existingDirs = mls.filter((dir) => !dir.canCreate)
+  if (mls.length === existingDirs.length) return false
 
   const msg = `Some or all of the existing Level Up microlessons in the ./level-up directory
   can be migrated into their own directories in the root of the module automatically.
@@ -287,7 +288,7 @@ async function toggleOffCreate(dirs: LvlUpMlDir[]) {
 
 async function confirmSelections(iD: Data): Promise<Data> {
   const { files, dirs, module } = iD
-  const mlsThatExist = files.mls.filter(ml => ml.isFound)
+  const mlsThatExist = files.mls.filter((ml) => ml.isFound)
   const mlNames = getMlNamesForConsole(mlsThatExist)
 
   const msg = `Please review the following:
@@ -299,12 +300,9 @@ async function confirmSelections(iD: Data): Promise<Data> {
     ${module.dirName}
   
   Full module title:
-    ${
-      module.prefix
-        ? `${module.prefix} - ${module.headline}`
-        : module.headline
-    }
-  ${module.prefix
+    ${module.prefix ? `${module.prefix} - ${module.headline}` : module.headline}
+  ${
+    module.prefix
       ? `
   Module Prefix:
     ${module.prefix}
@@ -334,7 +332,9 @@ async function confirmSelections(iD: Data): Promise<Data> {
 }
 
 function levelUpMlDisplay(
-  files: MlFile[], dirs: LvlUpMlDir[], module: Module
+  files: MlFile[],
+  dirs: LvlUpMlDir[],
+  module: Module,
 ): string {
   const notLectureMsg = `This is not a lecture module, so no Level Up microlessons need to be migrated.`
   if (module.meta.type !== "lecture") return notLectureMsg
@@ -342,25 +342,26 @@ function levelUpMlDisplay(
   const noLevelUpMlsMsg = `There are no Level Up microlessons to migrate.`
   if (!dirs.length) return noLevelUpMlsMsg
 
-  const optNoLevelUpMigrateMsg = "You have decided not to migrate the Level Up microlessons."
+  const optNoLevelUpMigrateMsg =
+    "You have decided not to migrate the Level Up microlessons."
   if (!module.meta.isMigratingLvlUp) return optNoLevelUpMigrateMsg
 
   const allLevelUpMlsOverlapMsg = `No Level Up microlessons can be migrated because the existing Level Up
   microlessons in the ./level-up directory all have overlapping names with
   directories already present in the root of the module.`
 
-  const dirsWithoutOverlap = dirs.filter(dir => dir.canCreate)
+  const dirsWithoutOverlap = dirs.filter((dir) => dir.canCreate)
   if (!dirsWithoutOverlap.length) return allLevelUpMlsOverlapMsg
 
-  const mlsToMigrate = files.filter(file => (
-    dirsWithoutOverlap.some(dir => dir.dirName === file.fileName)
-  ))
+  const mlsToMigrate = files.filter((file) =>
+    dirsWithoutOverlap.some((dir) => dir.dirName === file.fileName),
+  )
 
   const levelUpMlNames = getMlNamesForConsole(mlsToMigrate)
-  
+
   const someLevelUpMlsOverlapMsg = `Some, but not all Level Up microlessons can be migrated. They're shown below:
     ${levelUpMlNames}`
-  const noLevelUpMlsOverlapMsg = `All Level Up microlessons can be migrated. They're shown below:
+  const noLevelUpMlsOverlapMsg = `All Level Up microlessons can be migrated. They are:
     ${levelUpMlNames}`
 
   if (mlsToMigrate.length < files.length) {

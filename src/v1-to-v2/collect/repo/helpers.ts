@@ -7,9 +7,9 @@ import { titleCase } from "title-case"
 
 // types
 interface Contains {
-  assets: boolean,
-  originalAssets: boolean,
-  originalAssetsReadme: boolean,
+  assets: boolean
+  originalAssets: boolean
+  originalAssetsReadme: boolean
 }
 
 // config
@@ -21,9 +21,9 @@ function makeTitleCase(str: string): string {
   let noDashName = titleCase(str).replaceAll("-", " ")
 
   Object.keys(dictionary).forEach((word) => {
-    noDashName = noDashName.replaceAll(word, dictionary[word])
+    noDashName = noDashName.replaceAll(word, dictionary[word]!)
   })
-  
+
   return noDashName
 }
 
@@ -39,14 +39,16 @@ async function getFilePathsOfDirChildren(dirPath: string): Promise<string[]> {
 }
 
 async function getFilesThatExist(paths: string[]): Promise<string[]> {
-  const results = await Promise.all(paths.map(async (path) => {
-    try {
-      await access(path, constants.F_OK)
-      return true
-    } catch (error) {
-      return false
-    }
-  }))
+  const results = await Promise.all(
+    paths.map(async (path) => {
+      try {
+        await access(path, constants.F_OK)
+        return true
+      } catch (error) {
+        return false
+      }
+    }),
+  )
 
   return paths.filter((asset, idx) => results[idx])
 }
@@ -60,10 +62,12 @@ async function checkForTemplateAssetItems(dirName: string): Promise<Contains> {
       `${dirName}/assets/originals/README.md`,
     ])
     const containsAssets = foundAssets.includes(`${dirName}/assets`)
-    const containsOriginalAssets = 
-      foundAssets.includes(`${dirName}/assets/originals`)
-    const containsOriginalAssetsReadme = 
-      foundAssets.includes(`${dirName}/assets/originals/README.md`)
+    const containsOriginalAssets = foundAssets.includes(
+      `${dirName}/assets/originals`,
+    )
+    const containsOriginalAssetsReadme = foundAssets.includes(
+      `${dirName}/assets/originals/README.md`,
+    )
     return {
       assets: containsAssets,
       originalAssets: containsOriginalAssets,
@@ -78,7 +82,7 @@ async function checkForTemplateAssetItems(dirName: string): Promise<Contains> {
   }
 }
 
-export { 
+export {
   makeTitleCase,
   getDirs,
   getFilePathsOfDirChildren,

@@ -5,8 +5,8 @@ import path from "node:path"
 import { v4 as uuidv4 } from "uuid"
 
 // types
-import { 
-  FileData, 
+import {
+  FileData,
   PureTemplateFileData,
   PathedFileData,
   MlFileData,
@@ -15,21 +15,21 @@ import {
 
 // models (class types)
 interface File {
-  id: string;
-  majorType: "File";
-  type: 
-    "File" |
-    "PureTemplateFile" |
-    "PathedFile" |
-    "TemplateFile" |
-    "TemplateFileWithHeading" |
-    "TemplateFileWithLandingHeading" |
-    "ClpFile" |
-    "MlFile" |
-    "PklFile";
-  fileName: string;
-  fileType: string;
-  displayName: string;
+  id: string
+  majorType: "File"
+  type:
+    | "File"
+    | "PureTemplateFile"
+    | "PathedFile"
+    | "TemplateFile"
+    | "TemplateFileWithHeading"
+    | "TemplateFileWithLandingHeading"
+    | "ClpFile"
+    | "MlFile"
+    | "PklFile"
+  fileName: string
+  fileType: string
+  displayName: string
 }
 
 class File implements File {
@@ -44,19 +44,19 @@ class File implements File {
 }
 
 interface PureTemplateFile extends File {
-  type: "PureTemplateFile";
-  templateFile: string;
-  templateFileFetched: boolean;
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
+  type: "PureTemplateFile"
+  templateFile: string
+  templateFileFetched: boolean
+  lectureTemplateUrl: string
+  labTemplateUrl: string
 }
 
-class PureTemplateFile extends File implements PureTemplateFile  {
+class PureTemplateFile extends File implements PureTemplateFile {
   constructor(file: PureTemplateFileData) {
     super({
       fileName: file.fileName,
       fileType: file.fileType,
-      displayName: file.displayName
+      displayName: file.displayName,
     })
     this.type = "PureTemplateFile"
     this.templateFile = ""
@@ -67,23 +67,23 @@ class PureTemplateFile extends File implements PureTemplateFile  {
 }
 
 interface PathedFile extends File {
-  type: 
-    "PathedFile" | 
-    "TemplateFile" | 
-    "TemplateFileWithHeading" | 
-    "TemplateFileWithLandingHeading" |
-    "ClpFile" |
-    "MlFile" | 
-    "PklFile";
-  curPath: string;
-  curFileContent: string;
-  desiredPath: string;
-  newFileContent: string;
-  shouldCreate: boolean;
-  canMoveOrCreate: boolean;
-  didMoveOrCreate: boolean;
-  isFound: boolean;
-  didUpdateInPlace: boolean;
+  type:
+    | "PathedFile"
+    | "TemplateFile"
+    | "TemplateFileWithHeading"
+    | "TemplateFileWithLandingHeading"
+    | "ClpFile"
+    | "MlFile"
+    | "PklFile"
+  curPath: string
+  curFileContent: string
+  desiredPath: string
+  newFileContent: string
+  shouldCreate: boolean
+  canMoveOrCreate: boolean
+  didMoveOrCreate: boolean
+  isFound: boolean
+  didUpdateInPlace: boolean
 }
 
 class PathedFile extends File implements PathedFile {
@@ -91,7 +91,7 @@ class PathedFile extends File implements PathedFile {
     super({
       fileName: file.fileName,
       fileType: file.fileType,
-      displayName: file.displayName
+      displayName: file.displayName,
     })
     this.type = "PathedFile"
     this.curPath = file.curPath
@@ -107,16 +107,16 @@ class PathedFile extends File implements PathedFile {
 }
 
 interface MlFile extends PathedFile {
-  type: "MlFile";
-  parentDirName: string;
-  kebabName: string;
-  titleCaseName: string;
-  camelCaseName: string;
-  deliveryOrder: number;
-  isLvlUp: boolean;
-  shouldMove: boolean;
-  canUpdateHeading: boolean;
-  didUpdateHeading: boolean;
+  type: "MlFile"
+  parentDirName: string
+  kebabName: string
+  titleCaseName: string
+  camelCaseName: string
+  deliveryOrder: number
+  isLvlUp: boolean
+  shouldMove: boolean
+  canUpdateHeading: boolean
+  didUpdateHeading: boolean
 }
 
 class MlFile extends PathedFile {
@@ -144,9 +144,9 @@ class MlFile extends PathedFile {
 }
 
 interface ClpFile extends PathedFile {
-  type: "ClpFile";
-  canUpdateHeading: boolean;
-  didUpdateHeading: boolean;
+  type: "ClpFile"
+  canUpdateHeading: boolean
+  didUpdateHeading: boolean
 }
 
 class ClpFile extends PathedFile implements ClpFile {
@@ -167,16 +167,20 @@ class ClpFile extends PathedFile implements ClpFile {
 }
 
 interface TemplateFile extends PathedFile {
-  type: 
-    "TemplateFile" |
-    "PklFile" |
-    "TemplateFileWithHeading" |
-    "TemplateFileWithLandingHeading";
-  foundIn: string[];
-  templateFile: string;
-  templateFileFetched: boolean;
-  lectureTemplateUrl: string;
-  labTemplateUrl: string;
+  type:
+    | "TemplateFile"
+    | "PklFile"
+    | "TemplateFileWithHeading"
+    | "TemplateFileWithLandingHeading"
+  foundIn: string[]
+  templateFile: string
+  templateFileFetched: boolean
+  lectureTemplateUrl: string
+  labTemplateUrl: string
+  requiresManualMigrationOnUpdate: boolean
+  requiresManualMigrationOnUpdateMsg: string
+  requiresManualMigrationOnCreate: boolean
+  requiresManualMigrationOnCreateMsg: string
 }
 
 class TemplateFile extends PathedFile implements TemplateFile {
@@ -196,11 +200,17 @@ class TemplateFile extends PathedFile implements TemplateFile {
     this.templateFileFetched = false
     this.lectureTemplateUrl = file.lectureTemplateUrl
     this.labTemplateUrl = file.labTemplateUrl
+    this.requiresManualMigrationOnUpdate = file.requiresManualMigrationOnUpdate
+    this.requiresManualMigrationOnUpdateMsg =
+      file.requiresManualMigrationOnUpdateMsg
+    this.requiresManualMigrationOnCreate = file.requiresManualMigrationOnCreate
+    this.requiresManualMigrationOnCreateMsg =
+      file.requiresManualMigrationOnCreateMsg
   }
 }
 
 interface PklFile extends TemplateFile {
-  type: "PklFile";
+  type: "PklFile"
 }
 
 class PklFile extends TemplateFile implements PklFile {
@@ -217,27 +227,26 @@ class PklFile extends TemplateFile implements PklFile {
       lectureTemplateUrl: file.lectureTemplateUrl,
       labTemplateUrl: file.labTemplateUrl,
       requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
-      requiresManualMigrationOnUpdateMsg: 
+      requiresManualMigrationOnUpdateMsg:
         file.requiresManualMigrationOnUpdateMsg,
       requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
-      requiresManualMigrationOnCreateMsg: 
-      file.requiresManualMigrationOnCreateMsg,
+      requiresManualMigrationOnCreateMsg:
+        file.requiresManualMigrationOnCreateMsg,
     })
     this.type = "PklFile"
   }
 }
 
 interface TemplateFileWithHeading extends TemplateFile {
-  type: "TemplateFileWithHeading" | "TemplateFileWithLandingHeading";
-  canUpdateHeading: boolean;
-  didUpdateHeading: boolean;
-  requiresManualMigrationOnUpdate: boolean;
-  requiresManualMigrationOnUpdateMsg: string;
-  requiresManualMigrationOnCreate: boolean;
-  requiresManualMigrationOnCreateMsg: string;
+  type: "TemplateFileWithHeading" | "TemplateFileWithLandingHeading"
+  canUpdateHeading: boolean
+  didUpdateHeading: boolean
 }
 
-class TemplateFileWithHeading extends TemplateFile implements TemplateFileWithHeading {
+class TemplateFileWithHeading
+  extends TemplateFile
+  implements TemplateFileWithHeading
+{
   constructor(file: TemplateFileData) {
     super({
       fileName: file.fileName,
@@ -251,31 +260,26 @@ class TemplateFileWithHeading extends TemplateFile implements TemplateFileWithHe
       lectureTemplateUrl: file.lectureTemplateUrl,
       labTemplateUrl: file.labTemplateUrl,
       requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
-      requiresManualMigrationOnUpdateMsg: 
+      requiresManualMigrationOnUpdateMsg:
         file.requiresManualMigrationOnUpdateMsg,
       requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
-      requiresManualMigrationOnCreateMsg: 
-      file.requiresManualMigrationOnCreateMsg,
+      requiresManualMigrationOnCreateMsg:
+        file.requiresManualMigrationOnCreateMsg,
     })
     this.type = "TemplateFileWithHeading"
     this.canUpdateHeading = checkCanHeadingUpdate(file.curFileContent)
     this.didUpdateHeading = false
-    this.requiresManualMigrationOnUpdate = 
-      file.requiresManualMigrationOnUpdate
-    this.requiresManualMigrationOnUpdateMsg = 
-      file.requiresManualMigrationOnUpdateMsg
-    this.requiresManualMigrationOnCreate = 
-      file.requiresManualMigrationOnCreate
-    this.requiresManualMigrationOnCreateMsg = 
-      file.requiresManualMigrationOnCreateMsg
   }
 }
 
 interface TemplateFileWithLandingHeading extends TemplateFileWithHeading {
-  type: "TemplateFileWithLandingHeading";
+  type: "TemplateFileWithLandingHeading"
 }
 
-class TemplateFileWithLandingHeading extends TemplateFileWithHeading implements TemplateFileWithLandingHeading {
+class TemplateFileWithLandingHeading
+  extends TemplateFileWithHeading
+  implements TemplateFileWithLandingHeading
+{
   constructor(file: TemplateFileData) {
     super({
       fileName: file.fileName,
@@ -286,14 +290,14 @@ class TemplateFileWithLandingHeading extends TemplateFileWithHeading implements 
       desiredPath: file.desiredPath,
       isFound: file.isFound,
       foundIn: file.foundIn,
-      lectureTemplateUrl: file.lectureTemplateUrl ,
+      lectureTemplateUrl: file.lectureTemplateUrl,
       labTemplateUrl: file.labTemplateUrl,
       requiresManualMigrationOnUpdate: file.requiresManualMigrationOnUpdate,
-      requiresManualMigrationOnUpdateMsg: 
+      requiresManualMigrationOnUpdateMsg:
         file.requiresManualMigrationOnUpdateMsg,
       requiresManualMigrationOnCreate: file.requiresManualMigrationOnCreate,
-      requiresManualMigrationOnCreateMsg: 
-      file.requiresManualMigrationOnCreateMsg,
+      requiresManualMigrationOnCreateMsg:
+        file.requiresManualMigrationOnCreateMsg,
     })
     this.type = "TemplateFileWithLandingHeading"
   }
@@ -301,6 +305,7 @@ class TemplateFileWithLandingHeading extends TemplateFileWithHeading implements 
 
 function checkCanHeadingUpdate(fileContent: string): boolean {
   const firstLine = fileContent.split("\n")[0]
+  if (!firstLine) return false
   return firstLine.startsWith("# ![") && firstLine.endsWith(".png)")
 }
 

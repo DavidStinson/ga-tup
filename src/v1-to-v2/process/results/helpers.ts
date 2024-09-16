@@ -1,10 +1,11 @@
 // types
-import { ResultMsgs, TemplateDir } from "../../types.js"
+import { ResultMsgs, TemplateDir, MlFile, ClpFile } from "../../types.js"
 
+// do the thing
 function processTemplateDir(
   msgs: ResultMsgs,
   dir: TemplateDir,
-  verbose: boolean
+  verbose: boolean,
 ): ResultMsgs {
   const shouldNotExistMsg = `The ${dir.dirName} directory should not exist at ${dir.curPath}.
     You will need to remove it manually.`
@@ -34,4 +35,17 @@ function processTemplateDir(
   return msgs
 }
 
-export { processTemplateDir }
+function processHeading(msgs: ResultMsgs, file: MlFile | ClpFile) {
+  const headingUpdatedMsg = `The heading for the ${file.desiredPath} file was updated.`
+  const headingNotUpdatedMsg = `The heading for the ${file.desiredPath} file was not updated.
+    You will need to update it manually.`
+
+  if (file.didUpdateHeading) {
+    msgs.successes.push(headingUpdatedMsg)
+  } else if (!file.didUpdateHeading) {
+    msgs.failures.push(headingNotUpdatedMsg)
+  }
+  return msgs
+}
+
+export { processTemplateDir, processHeading }

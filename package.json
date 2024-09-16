@@ -5,9 +5,12 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run tsc && npm run exmod",
-    "exmod": "chmod u+x ./bin/index.js",
-    "tsc": "tsc"
+    "build": "npm run tsc",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "ci": "npm run build && npm run check-format",
+    "local-release": "changeset version && changeset publish",
+    "prepublishOnly": "npm run ci"
   },
   "repository": {
     "type": "git",
@@ -19,7 +22,10 @@
   "bugs": {
     "url": "https://github.com/DavidStinson/ga-tup/issues"
   },
-  "homepage": "https://github.com/DavidStinson/ga-tup#readme",
+  "homepage": "https://github.com/DavidStinson/ga-tup",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@inquirer/prompts": "^5.3.8",
     "chalk": "^5.3.0",
@@ -32,8 +38,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.8",
     "@types/node": "^22.5.0",
     "@types/uuid": "^10.0.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   },
   "bin": {

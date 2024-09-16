@@ -1,6 +1,7 @@
 // types
 import { Module } from "../../types.js"
 
+// do the thing
 function updatePrefixAndHeadline(file: string, module: Module) {
   const fileWithPrefix = updatePrefix(file, module)
   const fileWithUpdatedHeadline = updateHeadline(fileWithPrefix, module)
@@ -10,14 +11,14 @@ function updatePrefixAndHeadline(file: string, module: Module) {
 function updatePrefix(file: string, module: Module) {
   return file.replace(
     '<span class="prefix"></span>',
-    `<span class="prefix">${module.prefix}</span>`
+    `<span class="prefix">${module.prefix}</span>`,
   )
 }
 
 function updateHeadline(file: string, module: Module) {
   return file.replace(
     '<span class="headline">[tktk Module Name]</span>',
-    `<span class="headline">${module.headline}</span>`
+    `<span class="headline">${module.headline}</span>`,
   )
 }
 

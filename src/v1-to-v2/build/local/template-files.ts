@@ -8,20 +8,24 @@ import {
 
 // types
 import {
-  Data, TemplateFile, TemplateFileWithHeading, Module
+  Data,
+  TemplateFile,
+  TemplateFileWithHeading,
+  Module,
 } from "../../types.js"
 
 // do the thing
 function build(iD: Data) {
   iD.files.defaultLayout = buildNewDefaultLayout(
-    iD.files.defaultLayout, iD.module
+    iD.files.defaultLayout,
+    iD.module,
   )
   iD.files.rootReadme = buildNewRootReadme(iD)
   iD.files.videoHub = buildNewFile(iD.files.videoHub, iD.module)
   iD.files.releaseNotes = buildNewFile(iD.files.releaseNotes, iD.module)
   iD.files.instructorGuide = buildNewFile(iD.files.instructorGuide, iD.module)
   iD.files.references = buildNewFile(iD.files.references, iD.module)
-  
+
   return iD.files
 }
 
@@ -35,18 +39,18 @@ function buildNewDefaultLayout(file: TemplateFile, module: Module) {
 
   file.newFileContent = file.templateFile.replace(
     "<title>[tktk Module Name]</title>",
-    `<title>${moduleTitle}</title>`
+    `<title>${moduleTitle}</title>`,
   )
 
   return file
 }
 
 function buildNewRootReadme(iD: Data) {
-  const { files, module, } = iD
+  const { files, module } = iD
   const { rootReadme } = files
 
-   // If we couldn't fetch the template file, we shouldn't do anything
-   if (!rootReadme.templateFileFetched) return rootReadme
+  // If we couldn't fetch the template file, we shouldn't do anything
+  if (!rootReadme.templateFileFetched) return rootReadme
 
   if (rootReadme.isFound && rootReadme.canUpdateHeading) {
     const oldFile = removeHero(rootReadme.curFileContent)
@@ -55,7 +59,7 @@ function buildNewRootReadme(iD: Data) {
     
     -- tktk old file content below this line --
 
-    ${oldFile}` 
+    ${oldFile}`
     rootReadme.didUpdateHeading = true
   } else if (rootReadme.isFound) {
     const template = updatePrefixAndHeadline(rootReadme.templateFile, module)
@@ -69,7 +73,8 @@ function buildNewRootReadme(iD: Data) {
 }
 
 function buildNewFile(
-  file: TemplateFileWithHeading, module: Module
+  file: TemplateFileWithHeading,
+  module: Module,
 ): TemplateFileWithHeading {
   const heading = buildSubHeading(module, file.displayName)
 
@@ -79,7 +84,7 @@ function buildNewFile(
     file.didUpdateHeading = true
   } else if (file.isFound) {
     file.newFileContent = heading + file.curFileContent
-  } else if (file.templateFileFetched){
+  } else if (file.templateFileFetched) {
     // If we couldn't fetch the template file, we shouldn't do anything
 
     const template = updateHeadline(file.templateFile, module)
