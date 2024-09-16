@@ -1,6 +1,6 @@
 {
   "name": "ga-tup",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A template updater for General Assembly's modular technical content.",
   "main": "./dist/index.js",
   "scripts": {
