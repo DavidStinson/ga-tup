@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // npm
 import { Command } from "commander"
 
