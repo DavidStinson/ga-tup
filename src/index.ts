@@ -13,7 +13,7 @@ import { cliOptionsSchema, CliOptions } from "./types.js"
 async function main() {
   const cL = new Command()
 
-  cL.version("0.2.1", "-v, --version", "Outputs the current version.")
+  cL.version("0.2.2", "-v, --version", "Outputs the current version.")
   cL.name("ga-tup")
   cL.description("A template updater for GA's modular technical content.")
 
