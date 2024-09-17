@@ -1,5 +1,5 @@
 // types
-import { Module } from "../../types.js"
+import type { Module } from "../../types.js"
 
 // do the thing
 function updatePrefixAndHeadline(file: string, module: Module) {

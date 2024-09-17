@@ -5,7 +5,7 @@ import { promptContinue } from "../helpers.js"
 import { select } from "@inquirer/prompts"
 
 // types
-import { Data, Meta } from "../../types.js"
+import type { Data, Meta } from "../../types.js"
 
 // do the thing
 async function prompt(iD: Data): Promise<Data> {

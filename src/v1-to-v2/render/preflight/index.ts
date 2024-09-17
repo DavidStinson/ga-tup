@@ -2,7 +2,7 @@
 import chalk from "chalk"
 
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // do the thing
 async function render(iD: Data) {

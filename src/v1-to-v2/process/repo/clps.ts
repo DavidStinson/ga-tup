@@ -1,5 +1,5 @@
 // types
-import { Data, Msgs, ClpFile } from "../../types.js"
+import type { Data, Msgs, ClpFile } from "../../types.js"
 
 // local
 import { processGoodItem, processFileWithHeading } from "./helpers.js"

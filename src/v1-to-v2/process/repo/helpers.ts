@@ -1,5 +1,5 @@
 // types
-import {
+import type {
   Msgs,
   TemplateDir,
   TemplateFile,

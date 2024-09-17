@@ -5,7 +5,7 @@ import path from "node:path"
 import { v4 as uuidv4 } from "uuid"
 
 // types
-import {
+import type {
   FileData,
   PureTemplateFileData,
   PathedFileData,

@@ -6,7 +6,10 @@ import path from "node:path"
 import { getFilePathsOfDirChildren, makeTitleCase } from "../helpers.js"
 
 // types
-import { Data, Files, ClpFile } from "../../../types.js"
+import type { Data, Files } from "../../../types.js"
+
+// models
+import { ClpFile } from "../../../models/file.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Files> {

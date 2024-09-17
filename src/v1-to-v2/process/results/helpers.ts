@@ -1,5 +1,5 @@
 // types
-import { ResultMsgs, TemplateDir, MlFile, ClpFile } from "../../types.js"
+import type { ResultMsgs, TemplateDir, MlFile, ClpFile } from "../../types.js"
 
 // do the thing
 function processTemplateDir(
@@ -9,6 +9,7 @@ function processTemplateDir(
 ): ResultMsgs {
   const shouldNotExistMsg = `The ${dir.dirName} directory should not exist at ${dir.curPath}.
     You will need to remove it manually.`
+  const shouldNotAndDoesNotExistMsg = `The ${dir.dirName} directory should not exist and it was not found. No action is needed.`
   const foundMsg = `The ${dir.dirName} directory already exists at ${dir.desiredPath}.`
   const optToNotCreateMsg = `You opted to not create the ${dir.dirName} directory at ${dir.desiredPath}.
     You will need to create it manually.`
@@ -20,6 +21,8 @@ function processTemplateDir(
 
   if (dir.isFound && dir.shouldRemove) {
     msgs.failures.push(shouldNotExistMsg)
+  } else if (!dir.isFound && dir.shouldRemove) {
+    msgs.unchanged.push(shouldNotAndDoesNotExistMsg)
   } else if (dir.isFound) {
     if (verbose) msgs.unchanged.push(foundMsg)
   } else if (!dir.shouldCreate && dir.canCreate) {

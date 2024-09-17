@@ -5,7 +5,7 @@ import os from "node:os"
 import { titleCase } from "title-case"
 
 // types
-import { Files, Module, PklFile, MlFile } from "../../types.js"
+import type { Files, Module, PklFile, MlFile } from "../../types.js"
 
 // config
 import { config } from "../../config.js"

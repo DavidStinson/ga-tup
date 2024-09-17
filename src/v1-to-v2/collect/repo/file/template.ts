@@ -2,7 +2,7 @@
 import { readFile } from "node:fs/promises"
 
 // types
-import {
+import type {
   Data,
   Files,
   TemplateFile,

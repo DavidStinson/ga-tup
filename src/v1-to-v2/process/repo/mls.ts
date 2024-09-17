@@ -1,5 +1,5 @@
 // types
-import { Data, Msgs, MlFile, MlDir, LvlUpMlDir } from "../../types.js"
+import type { Data, Msgs, MlFile, MlDir, LvlUpMlDir } from "../../types.js"
 
 // local
 import { processFileWithHeading } from "./helpers.js"

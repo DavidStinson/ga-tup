@@ -380,8 +380,9 @@ const config: Config = {
   },
 }
 
-export {
-  config,
+export { config }
+
+export type {
   FileData,
   PureTemplateFileData,
   PathedFileData,

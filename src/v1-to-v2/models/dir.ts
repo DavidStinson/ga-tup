@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from "uuid"
 
 // config types
-import {
+import type {
   DirData,
   TemplateDirData,
   MlDirData,

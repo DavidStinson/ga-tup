@@ -2,7 +2,7 @@
 import { buildSubHeading, removeHero } from "./helpers.js"
 
 // types
-import { Module, MlFile } from "../../types.js"
+import type { Module, MlFile } from "../../types.js"
 
 // do the thing
 function build(mls: MlFile[], module: Module): MlFile[] {

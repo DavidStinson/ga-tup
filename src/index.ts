@@ -7,7 +7,8 @@ import { Command } from "commander"
 import { v1ToV2 } from "./v1-to-v2/index.js"
 
 // types
-import { cliOptionsSchema, CliOptions } from "./types.js"
+import { cliOptionsSchema } from "./types.js"
+import type { CliOptions } from "./types.js"
 
 // do the thing
 async function main() {

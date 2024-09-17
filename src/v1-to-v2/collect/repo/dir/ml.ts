@@ -7,7 +7,10 @@ import {
 } from "../helpers.js"
 
 // types
-import { MlDir, Dirs, Module } from "../../../types.js"
+import type { Dirs, Module } from "../../../types.js"
+
+// models
+import { MlDir } from "../../../models/dir.js"
 
 // config
 import { config } from "../../../config.js"

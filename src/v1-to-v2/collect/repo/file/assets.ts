@@ -2,7 +2,7 @@
 import { getFilesThatExist } from "../helpers.js"
 
 // types
-import { Data, Assets, MlDir } from "../../../types.js"
+import type { Data, Assets, MlDir } from "../../../types.js"
 
 // config
 import { config } from "../../../config.js"

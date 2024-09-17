@@ -2,7 +2,7 @@
 import { stat } from "node:fs/promises"
 
 // types
-import { TemplateDir, Dirs, Module, Data } from "../../../types.js"
+import type { TemplateDir, Dirs, Module, Data } from "../../../types.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Dirs> {

@@ -1,5 +1,5 @@
 // types
-import { Data, Msgs, Meta, PklFile } from "../../types.js"
+import type { Data, Msgs, Meta, PklFile } from "../../types.js"
 
 // local
 import {

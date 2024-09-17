@@ -3,7 +3,7 @@ import util from "node:util"
 import { exec } from "node:child_process"
 
 // types
-import { Data, Meta } from "../../types.js"
+import type { Data, Meta } from "../../types.js"
 
 // data setup
 const execAsync = util.promisify(exec)

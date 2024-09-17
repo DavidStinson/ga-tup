@@ -12,7 +12,7 @@ import {
 } from "./helpers.js"
 
 // types
-import { Module } from "../../types.js"
+import type { Module } from "../../types.js"
 
 // do the thing
 async function getData(module: Module): Promise<Module> {

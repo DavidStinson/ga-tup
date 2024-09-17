@@ -5,7 +5,7 @@ import { build as buildMicrolessonFiles } from "./microlessons-files.js"
 import { build as buildPklFiles } from "./pkl-files.js"
 
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // do the thing
 async function build(iD: Data) {

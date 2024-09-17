@@ -2,7 +2,7 @@
 import chalk from "chalk"
 
 // types
-import { Msgs, ResultMsgs } from "../types.js"
+import type { Msgs, ResultMsgs } from "../types.js"
 
 // data setup
 const log = console.log

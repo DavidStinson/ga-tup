@@ -5,7 +5,7 @@ import { process as processMicrolessons } from "./mls.js"
 import { process as processAssets } from "./assets.js"
 
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // do the thing
 function process(iD: Data): Data {

@@ -1,5 +1,5 @@
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // local
 import { process as processTemplateItems } from "./template-items.js"

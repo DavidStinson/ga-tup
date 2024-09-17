@@ -7,7 +7,7 @@ import {
 } from "./helpers.js"
 
 // types
-import {
+import type {
   Data,
   TemplateFile,
   TemplateFileWithHeading,

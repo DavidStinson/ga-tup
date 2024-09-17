@@ -2,7 +2,7 @@
 import os from "node:os"
 
 // types
-import { Data, ResultMsgs } from "../../types.js"
+import type { Data, ResultMsgs } from "../../types.js"
 
 // do the thing
 function process(iD: Data): ResultMsgs {

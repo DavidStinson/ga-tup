@@ -11,7 +11,7 @@ import {
 import { TemplateDir, MlDir, LvlUpMlDir } from "./models/dir.js"
 
 // types
-import { CliOptions } from "../types.js"
+import type { CliOptions } from "../types.js"
 
 // do the thing
 interface Assets {
@@ -114,13 +114,6 @@ export {
   TemplateDir,
   MlDir,
   LvlUpMlDir,
-  Assets,
-  Meta,
-  Module,
-  Dirs,
-  Files,
-  Msgs,
-  ResultMsgs,
-  Env,
-  Data,
 }
+
+export type { Assets, Meta, Module, Dirs, Files, Msgs, ResultMsgs, Env, Data }

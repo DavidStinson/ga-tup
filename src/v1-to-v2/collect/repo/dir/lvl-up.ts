@@ -11,7 +11,10 @@ import {
 } from "../helpers.js"
 
 // types
-import { Data, Dirs, LvlUpMlDir, MlFile } from "../../../types.js"
+import type { Data, Dirs, MlFile } from "../../../types.js"
+
+// models
+import { LvlUpMlDir } from "../../../models/dir.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Dirs> {

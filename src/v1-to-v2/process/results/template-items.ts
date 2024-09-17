@@ -2,7 +2,7 @@
 import os from "node:os"
 
 // types
-import {
+import type {
   Data,
   ResultMsgs,
   TemplateFile,

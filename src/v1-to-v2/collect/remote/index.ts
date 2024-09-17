@@ -11,7 +11,12 @@ import {
 import { promptContinue } from "../../prompt/helpers.js"
 
 // types
-import { Data, Files, TemplateFile, PureTemplateFile } from "../../types.js"
+import type {
+  Data,
+  Files,
+  TemplateFile,
+  PureTemplateFile,
+} from "../../types.js"
 
 // data setup
 class ResponseError extends Error {

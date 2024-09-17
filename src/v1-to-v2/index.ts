@@ -9,7 +9,7 @@ import {
 } from "./render/index.js"
 import { buildLocal, buildToDisk } from "./build/index.js"
 
-// types
+// types/models
 import {
   PureTemplateFile,
   PklFile,
@@ -17,6 +17,8 @@ import {
   TemplateFileWithHeading,
   TemplateFileWithLandingHeading,
   TemplateDir,
+} from "./types.js"
+import type {
   Assets,
   Module,
   Dirs,
@@ -26,7 +28,7 @@ import {
   Env,
   Data,
 } from "./types.js"
-import { CliOptions } from "../types.js"
+import type { CliOptions } from "../types.js"
 
 // config
 import { config } from "./config.js"

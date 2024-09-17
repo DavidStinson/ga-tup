@@ -7,7 +7,7 @@ import { getMlNamesForConsole } from "../helpers.js"
 import { promptContinue } from "../helpers.js"
 
 // types
-import { Data, Module, MlFile, LvlUpMlDir } from "../../types.js"
+import type { Data, Module, MlFile, LvlUpMlDir } from "../../types.js"
 
 // do the thing
 async function prompt(iD: Data): Promise<Data> {

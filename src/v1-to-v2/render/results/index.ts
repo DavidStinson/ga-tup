@@ -2,7 +2,7 @@
 import chalk from "chalk"
 
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // local
 import { renderMessages } from "../helpers.js"

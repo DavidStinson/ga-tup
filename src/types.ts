@@ -8,4 +8,6 @@ const cliOptionsSchema = z.object({
 
 type CliOptions = z.infer<typeof cliOptionsSchema>
 
-export { cliOptionsSchema, CliOptions }
+export { cliOptionsSchema }
+
+export type { CliOptions }

@@ -7,7 +7,7 @@ import { getMlFilesData } from "./ml.js"
 import { checkNeedToMakeLvlUpMlDirs, getLvlUpMlDirData } from "../dir/lvl-up.js"
 
 // types
-import { Data, Files } from "../../../types.js"
+import type { Data, Files } from "../../../types.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Files> {

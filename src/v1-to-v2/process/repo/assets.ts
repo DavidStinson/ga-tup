@@ -1,5 +1,5 @@
 // types
-import { Data, Msgs } from "../../types.js"
+import type { Data, Msgs } from "../../types.js"
 
 // do the thing
 function process(iD: Data): Msgs {

@@ -11,7 +11,7 @@ import { getData as getAssetsData } from "./file/assets.js"
 import { getData as getClpFilesData } from "./file/clp.js"
 
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // do the thing
 async function collect(iD: Data): Promise<Data> {

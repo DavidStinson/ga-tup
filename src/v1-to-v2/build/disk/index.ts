@@ -5,7 +5,7 @@ import { remove as removeAssets } from "./assets.js"
 import { build as buildMeta } from "./module.js"
 
 // types
-import { Data } from "../../types.js"
+import type { Data } from "../../types.js"
 
 // do the thing
 async function build(iD: Data): Promise<Data> {

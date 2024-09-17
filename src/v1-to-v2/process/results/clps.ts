@@ -1,5 +1,5 @@
 // types
-import { Data, ResultMsgs } from "../../types.js"
+import type { Data, ResultMsgs } from "../../types.js"
 
 // local
 import { processTemplateDir, processHeading } from "./helpers.js"

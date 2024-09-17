@@ -2,7 +2,7 @@
 import { rm } from "node:fs/promises"
 
 // types
-import { Data, Assets } from "../../types.js"
+import type { Data, Assets } from "../../types.js"
 
 // do the thing
 async function remove(iD: Data): Promise<Assets> {

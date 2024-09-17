@@ -6,7 +6,10 @@ import {
 } from "./helpers.js"
 
 // types
-import { Data, Files, Module, ClpFile } from "../../types.js"
+import type { Data, Files, Module } from "../../types.js"
+
+// models
+import { ClpFile } from "../../models/file.js"
 
 // do the thing
 function build(iD: Data): ClpFile[] {

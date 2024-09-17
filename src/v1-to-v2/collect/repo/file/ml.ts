@@ -9,7 +9,10 @@ import { camelCase } from "change-case"
 import { makeTitleCase } from "../helpers.js"
 
 // types
-import { Data, Files, MlDir, MlFile } from "../../../types.js"
+import type { Data, Files, MlDir } from "../../../types.js"
+
+// models
+import { MlFile } from "../../../models/file.js"
 
 // do the thing
 async function getData(iD: Data): Promise<Files> {

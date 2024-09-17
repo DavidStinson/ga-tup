@@ -1,5 +1,5 @@
 // types
-import { Data, Files, MlFile } from "../../../types.js"
+import type { Data, Files, MlFile } from "../../../types.js"
 
 async function getData(iD: Data): Promise<Files> {
   if (!iD.files.rootReadme.isFound) {
