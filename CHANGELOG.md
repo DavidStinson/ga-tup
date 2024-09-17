@@ -1,5 +1,11 @@
 # ga-tup
 
+## 0.2.3
+
+### Patch Changes
+
+- 5b6c21a: Fix bug causing directories that should not exist to flag as errors if they don't exist. Migrate to using verbatimModuleSyntax.
+
 ## 0.2.2
 
 ### Patch Changes
