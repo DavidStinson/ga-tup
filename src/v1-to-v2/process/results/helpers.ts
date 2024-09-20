@@ -21,7 +21,7 @@ function processTemplateDir(
 
   if (dir.isFound && dir.shouldRemove) {
     msgs.failures.push(shouldNotExistMsg)
-  } else if (!dir.isFound && dir.shouldRemove) {
+  } else if (!dir.isFound && !dir.shouldCreate) {
     msgs.unchanged.push(shouldNotAndDoesNotExistMsg)
   } else if (dir.isFound) {
     if (verbose) msgs.unchanged.push(foundMsg)

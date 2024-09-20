@@ -153,8 +153,8 @@ function processCreatedPklFile(
   const anyUnorderedMls = getAnyUnorderedMls(files)
 
   const shouldAndDidCreateMsg = `The ${file.displayName} file at ${file.desiredPath} was created and no additional work is required.`
-  const otherCoursesWarning = `A default Fallback course was created with the microlessons in the correct order.
-    However, if any other courses use this module you will need to create the course in the ${file.desiredPath} file.`
+  const otherCoursesWarning = `A default Fallback course was created in ${file.desiredPath} with the microlessons in the correct order.
+    However, if any other courses use this module you will need to create the course in this file.`
   const shouldAndDidCreateWithUnorderedMlsMsg = `The ${file.displayName} file at ${file.desiredPath} was created but some microlessons are not in the correct order.
     You will need to update the file manually.
     You should also audit the README.md file at the root of the project. It may be missing a link to some microlessons.`
@@ -252,8 +252,8 @@ function processUpdatedPklFile(
   const anyUnorderedMls = getAnyUnorderedMls(files)
 
   const foundAndUpdatedMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated and no additional work is required.`
-  const otherCoursesWarning = `A default Fallback course was updated with the microlessons in the correct order.
-  However, if any other courses use this module you will need to create the course in the ${file.desiredPath} file.`
+  const otherCoursesWarning = `A default Fallback course was updated in ${file.desiredPath} with the microlessons in the correct order.
+    However, if any other courses use this module you will need to create the course in this file.`
   const foundAndUpdatedWithUnorderedMlsMsg = `The ${file.displayName} file at ${file.desiredPath} was fully updated but some microlessons are not in the correct order.
     You will need to update the file manually.
     You should also audit the README.md file at the root of the project. It may be missing a link to these microlessons.`

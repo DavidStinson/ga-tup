@@ -42,12 +42,13 @@ ga-tup update --help
 
 ## Need help? Find a bug?
 
-File an [issue](https://github.com/DavidStinson/ga-tup/issues). Thanks for your help!
+File an [issue](https://github.com/DavidStinson/ga-tup/issues). I'll address your feedback ASAP!
 
 ## Release process
 
 1. Ensure you have the latest changes on the `main` branch in your local branch, and that your working tree is clean.
-2. Run the CI process with `npm run ci` to ensure you'll be able to publish successfully. If any changes need to be made, do so and ensure those changes are merged to `main` and brought into your local `main` branch.
-3. Run `npx changeset` to create a new changeset. This groups any changes into a single versioned release. Follow the prompts.
-4. Run `npm run local-release` which will run the CI process, bump the package version, and publish all changes to npm.
-5. Inform any stakeholders that a new version has been released. They can update with `npm i -g ga-tup`.
+2. Change the version number shown to users when they run the `ga-tup --version` command in the `./src/index.ts` file.
+3. Run the CI process with `npm run ci` to ensure you'll be able to publish successfully. If any changes need to be made, do so and ensure those changes are merged to `main` and brought into your local `main` branch.
+4. Run `npx changeset` to create a new changeset. This groups any changes into a single versioned release. Follow the prompts.
+5. Run `npm run local-release` which will run the CI process, bump the package version, and publish all changes to npm.
+6. Inform any stakeholders that a new version has been released. They can update with `npm i -g ga-tup`.
