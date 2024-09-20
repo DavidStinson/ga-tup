@@ -1,5 +1,11 @@
 # ga-tup
 
+## 0.2.4
+
+### Patch Changes
+
+- be6bc5f: Fix bug causing directories that should not exist to flag as errors if they don't exist
+
 ## 0.2.3
 
 ### Patch Changes
