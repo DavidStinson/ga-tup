@@ -1,28 +1,27 @@
-// npm
-import playwright from "playwright"
-
 // local
-import { scrapeCourse } from "./course.js"
-import { scrapeCurriculum } from "./curriculum.js"
+import { scrapeValidUrls } from "./pageUrls.js"
+import { scrapeModule } from "./module.js"
 
 // config
 import { validStudentFacingUrlPrefix } from "../../config.js"
 
-// do the thing
-async function scrape(page: playwright.Page) {
-  const pageUrls = await scrapeCourse(page)
-  
-  const pageData = pageUrls.map(pageUrl => buildPageData(pageUrl))
-  const pageAndSubPageData = await scrapeCurriculum(pageData)
-  
+// types
+import type { PageAndContext, PageData, PageAndPdfData } from "../../types.js"
 
+// do the thing
+async function scrape(window: PageAndContext): Promise<PageAndPdfData[]> {
+  const moduleUrls = await scrapeValidUrls(window)
+  
+  const courseData = moduleUrls.map(moduleUrl => buildCourseData(moduleUrl))
+  const ModuleData = await scrapeModule(courseData)
+  return ModuleData
 }
 
-function buildPageData(pageUrl: string) {
+function buildCourseData(moduleUrl: string): PageData {
   const endOfPrefixIdx = validStudentFacingUrlPrefix.length
-  const endOfTitleIdx = pageUrl.indexOf("/", endOfPrefixIdx)
-  const title = pageUrl.slice(endOfPrefixIdx, endOfTitleIdx)
-  return {title, pageUrl}
+  const endOfTitleIdx = moduleUrl.indexOf("/", endOfPrefixIdx)
+  const title = moduleUrl.slice(endOfPrefixIdx, endOfTitleIdx)
+  return {title, moduleUrl}
 }
 
 export { scrape }

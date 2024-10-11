@@ -1,11 +1,16 @@
 // npm
 import playwright from "playwright"
 
-// do the thing
-async function buildPage(url: string): Promise<playwright.Page> {
-  const browser = await playwright.chromium.launch()
+// types
+import type { PageAndContext } from "../../types.js"
 
-  const page = await browser.newPage()
+// create a browser for our session
+const browser = await playwright.chromium.launch()
+
+// do the thing
+async function buildPage(url: string): Promise<PageAndContext> {
+  const context = await browser.newContext()
+  const page = await context.newPage()
 
   page.on("requestfailed", function (request): void {
     if (request.resourceType() !== "document") return
@@ -37,7 +42,11 @@ async function buildPage(url: string): Promise<playwright.Page> {
 
   await page.goto(url)
 
-  return page
+  return {page, context}
 }
 
-export { buildPage }
+async function killBrowser() {
+  await browser.close()
+}
+
+export { buildPage, killBrowser }
