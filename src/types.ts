@@ -2,12 +2,23 @@
 import { z } from "zod"
 
 // types
-const cliOptionsSchema = z.object({
+const updateCliOptionsSchema = z.object({
   verbose: z.boolean(),
 })
 
-type CliOptions = z.infer<typeof cliOptionsSchema>
+const exportCliUrlArgument = z
+  .string({
+    required_error: "URL is required",
+    invalid_type_error: "URL must be a string",
+  })
+  .trim()
+  .toLowerCase()
+  .url({ message: "You must provide a URL as an argument." })
 
-export { cliOptionsSchema }
+type UpdateCliOptions = z.infer<typeof updateCliOptionsSchema>
 
-export type { CliOptions }
+type ExportCLIUrlArgument = z.infer<typeof exportCliUrlArgument>
+
+export { updateCliOptionsSchema, exportCliUrlArgument }
+
+export type { UpdateCliOptions, ExportCLIUrlArgument }

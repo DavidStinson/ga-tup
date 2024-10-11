@@ -28,7 +28,7 @@ import type {
   Env,
   Data,
 } from "./types.js"
-import type { CliOptions } from "../types.js"
+import type { UpdateCliOptions } from "../types.js"
 
 // config
 import { config } from "./config.js"
@@ -123,7 +123,7 @@ const resultMsgs: ResultMsgs = {
   failures: [],
 }
 
-const cliOptions: CliOptions = {
+const cliOptions: UpdateCliOptions = {
   verbose: false,
 }
 
@@ -140,7 +140,7 @@ const initialData: Data = {
 }
 
 // do the thing
-async function v1ToV2(cliOptions: CliOptions) {
+async function v1ToV2(cliOptions: UpdateCliOptions) {
   initialData.cliOptions = cliOptions
   await renderPreflight(initialData)
   const preflightData = await preflightPrompt(initialData)

@@ -11,7 +11,7 @@ import {
 import { TemplateDir, MlDir, LvlUpMlDir } from "./models/dir.js"
 
 // types
-import type { CliOptions } from "../types.js"
+import type { UpdateCliOptions } from "../types.js"
 
 // do the thing
 interface Assets {
@@ -100,7 +100,7 @@ interface Data {
   env: Env
   envMsgs: Msgs
   resultMsgs: ResultMsgs
-  cliOptions: CliOptions
+  cliOptions: UpdateCliOptions
 }
 
 export {
